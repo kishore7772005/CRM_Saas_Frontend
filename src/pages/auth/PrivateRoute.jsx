@@ -1,37 +1,37 @@
 import React from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const PrivateRoute = ({ permission }) => {
   const location = useLocation();
-  const token = localStorage.getItem("token");
-  const userData = localStorage.getItem("user");
+  const { tenantSlug } = useParams();
+  const { token, slug: userSlug, user } = useSelector((state) => state.auth);
 
-  //  Not logged in
-  if (!token || !userData) {
-    return <Navigate to="/" replace state={{ from: location }} />;
+  // If not logged in, redirect to login page
+  if (!token || !user) {
+    const loginPath = tenantSlug ? `/${tenantSlug}/login` : "/";
+    return <Navigate to={loginPath} replace state={{ from: location }} />;
+  }
+
+  // If tenantSlug exists in URL and doesn't match user slug, redirect to correct workspace
+  if (tenantSlug && tenantSlug !== userSlug) {
+    return <Navigate to={`/${userSlug}/dashboard`} replace />;
   }
 
   try {
-    const user = JSON.parse(userData);
-
-    //  Invalid user object
-    if (!user || !user.role) {
-      throw new Error("Invalid user");
-    }
-
-    //  Admin full access
-    if (user.role.name === "Admin") {
+    // Admin role has full access
+    if (user.role && user.role.name?.toLowerCase() === "admin") {
       return <Outlet />;
     }
 
-    //  Permission check
-    if (permission && !user.role.permissions?.[permission]) {
-      return <Navigate to="/dashboard" replace />;
+    // RBAC Permission check
+    if (permission && !user.role?.permissions?.[permission]) {
+      // Show "Access Denied" or redirect to user's dashboard
+      return <Navigate to={`/${userSlug}/dashboard`} replace />;
     }
 
     return <Outlet />;
   } catch (err) {
-    localStorage.clear();
     return <Navigate to="/" replace />;
   }
 };

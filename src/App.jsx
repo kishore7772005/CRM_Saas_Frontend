@@ -1,10 +1,19 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import React, { useState , useEffect} from "react";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
 import Login from "./pages/auth/login";
 import Layout from "./navbar/Layout";
 import PrivateRoute from "./pages/auth/PrivateRoute";
+
+// SuperAdmin Files
+import SuperAdminRoute from "./pages/auth/SuperAdminRoute";
+import SuperAdminLogin from "./pages/auth/SuperAdminLogin";
+import SuperAdminLayout from "./pages/superadmin/SuperAdminLayout";
+import SuperAdminDashboard from "./pages/superadmin/SuperAdminDashboard";
+import SuperAdminTenants from "./pages/superadmin/SuperAdminTenants";
+import SuperAdminSettings from "./pages/superadmin/SuperAdminSettings";
+import SuperAdminProfile from "./pages/superadmin/SuperAdminProfile";
 
 // Providers
 import { NotificationProvider } from "./context/NotificationContext";
@@ -53,16 +62,14 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-
   useEffect(() => {
     const handleStorageChange = () => {
-      if (!localStorage.getItem("token")) {
+      if (!localStorage.getItem("token") && !window.location.pathname.startsWith("/superadmin")) {
         window.location.href = "/";
       }
     };
 
     window.addEventListener("storage", handleStorageChange);
-
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
@@ -71,107 +78,148 @@ function App() {
       <NotificationProvider>
         <BrowserRouter>
           <div className="min-h-screen">
-
             <Routes>
-
               {/* PUBLIC */}
               <Route path="/" element={<Login />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/:tenantSlug/login" element={<Login />} />
               <Route path="/contact" element={<WebsiteContactForm />} />
               <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-              {/* PROTECTED */}
-              <Route element={<PrivateRoute />}>
-                <Route element={<Layout isModalOpen={isModalOpen} />}>
-
-                  {/*  COMMON ROUTES (NO PERMISSION) */}
-                  <Route path="/DealAnalysis" element={<DealIntelligenceDashboard />} />
-                  <Route path="/LossAnalysis" element={<LostDealAnalytics />} />
-                  <Route path="/cltv/dashboard" element={<CLVDashboard />} />
-                  <Route path="/cltv/client/:companyName" element={<ClientCLVDetails />} />
-                  <Route path="/leaderboard" element={<AllStreakLeaderboard />} />
-                  <Route path="/dashboard/notifications" element={<NotificationsPage />} />
-
-                  {/* Optional: make email global */}
-                  <Route path="/mass-email" element={<MassEmail />} />
-                  <Route path="/create-email" element={<CreateEmail />} />
-                  <Route path="/create-email/:id" element={<CreateEmail />} />
-                  <Route path="/scheduled-emails" element={<ScheduledEmails />} />
-                  <Route path="/email-history" element={<EmailHistory />} />
-
-                  {/*  PERMISSION ROUTES */}
-
-                  <Route element={<PrivateRoute permission="dashboard" />}>
-                    <Route path="/dashboard" element={<AdminDashboard />} />
-                  </Route>
-
-                  {/* VIEW LEADS (Sales + Admin) */}
-<Route element={<PrivateRoute permission="leads" />}>
-  <Route path="/leads" element={<Leads />} />
-  <Route path="/leads/view/:id" element={<ViewLead />} />
-</Route>
-
-{/* CREATE LEAD (Admin only) */}
-<Route element={<PrivateRoute permission="create_lead" />}>
-  <Route path="/createleads" element={<CreateLeads />} />
-</Route>
-
-                  {/* VIEW DEALS */}
-<Route element={<PrivateRoute permission="deals_all" />}>
-  <Route path="/deals" element={<AllDeals />} />
-</Route>
-
-{/* CREATE DEAL (Admin only) */}
-<Route element={<PrivateRoute permission="create_deal" />}>
-  <Route path="/createDeal" element={<CreateDeal />} />
-  <Route path="/createDeal/:id" element={<CreateDeal />} />
-</Route>
-
-                  <Route element={<PrivateRoute permission="deals_pipeline" />}>
-                    <Route path="/Pipelineview" element={<Pipeline_view />} />
-                    <Route path="/Pipelineview/:dealId?" element={<Pipeline_modal_view />} />
-                  </Route>
-
-                  <Route element={<PrivateRoute permission="proposal" />}>
-                    <Route path="/proposal" element={<ProposalHead />} />
-                    <Route path="/proposal/sendproposal" element={<SendProposal />} />
-                    <Route path="/proposal/drafts" element={<DraftsPage />} />
-                    <Route path="/proposal/view/:id" element={<ViewProposal />} />
-                  </Route>
-
-                  <Route element={<PrivateRoute permission="invoices" />}>
-                    <Route path="/invoices" element={<InvoiceHead />} />
-                    <Route path="/invoices/:id" element={<InvoiceView />} />
-                  </Route>
-
-                  <Route element={<PrivateRoute permission="activities_calendar" />}>
-                    <Route path="/calendar" element={<CalendarView />} />
-                  </Route>
-
-                  <Route element={<PrivateRoute permission="activities_list" />}>
-                    <Route path="/list" element={<Activity />} />
-                  </Route>
-
-                  <Route element={<PrivateRoute permission="users_roles" />}>
-                    <Route path="/user&roles" element={<UserManagement />} />
-                  </Route>
-
-                  <Route element={<PrivateRoute permission="reports" />}>
-                    <Route path="/team-analytics" element={<ReportsPage />} />
-                  </Route>
-
-                  <Route element={<PrivateRoute permission="email_chat" />}>
-                    <Route path="/emailchat" element={<EmailChat />} />
-                  </Route>
-
-                  <Route element={<PrivateRoute permission="settings" />}>
-                    <Route path="/settings" element={<Settings />} />
-                  </Route>
-
+              {/* SUPERADMIN PORTAL */}
+              <Route path="/superadmin/login" element={<SuperAdminLogin />} />
+              <Route path="/superadmin" element={<SuperAdminRoute />}>
+                <Route element={<SuperAdminLayout />}>
+                  <Route index element={<Navigate to="dashboard" replace />} />
+                  <Route path="dashboard" element={<SuperAdminDashboard />} />
+                  <Route path="tenants" element={<SuperAdminTenants />} />
+                  <Route path="settings" element={<SuperAdminSettings />} />
+                  <Route path="profile" element={<SuperAdminProfile />} />
                 </Route>
               </Route>
 
-            </Routes>
+              {/* TENANT PORTAL (MULTI-TENANT ROUTING) */}
+              <Route path="/:tenantSlug" element={<PrivateRoute />}>
+                <Route element={<Layout isModalOpen={isModalOpen} />}>
+                  <Route index element={<Navigate to="dashboard" replace />} />
+                  
+                  {/* COMMON ROUTES */}
+                  <Route path="DealAnalysis" element={<DealIntelligenceDashboard />} />
+                  <Route path="LossAnalysis" element={<LostDealAnalytics />} />
+                  <Route path="cltv/dashboard" element={<CLVDashboard />} />
+                  <Route path="cltv/client/:companyName" element={<ClientCLVDetails />} />
+                  <Route path="leaderboard" element={<AllStreakLeaderboard />} />
+                  <Route path="dashboard/notifications" element={<NotificationsPage />} />
 
+                  {/* campaigns */}
+                  <Route path="mass-email" element={<MassEmail />} />
+                  <Route path="create-email" element={<CreateEmail />} />
+                  <Route path="create-email/:id" element={<CreateEmail />} />
+                  <Route path="scheduled-emails" element={<ScheduledEmails />} />
+                  <Route path="email-history" element={<EmailHistory />} />
+
+                  {/* PERMISSION CHECKED ROUTES */}
+                  <Route element={<PrivateRoute permission="dashboard" />}>
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="leads" />}>
+                    <Route path="leads" element={<Leads />} />
+                    <Route path="leads/view/:id" element={<ViewLead />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="create_lead" />}>
+                    <Route path="createleads" element={<CreateLeads />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="deals_all" />}>
+                    <Route path="deals" element={<AllDeals />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="create_deal" />}>
+                    <Route path="createDeal" element={<CreateDeal />} />
+                    <Route path="createDeal/:id" element={<CreateDeal />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="deals_pipeline" />}>
+                    <Route path="Pipelineview" element={<Pipeline_view />} />
+                    <Route path="Pipelineview/:dealId?" element={<Pipeline_modal_view />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="proposal" />}>
+                    <Route path="proposal" element={<ProposalHead />} />
+                    <Route path="proposal/sendproposal" element={<SendProposal />} />
+                    <Route path="proposal/drafts" element={<DraftsPage />} />
+                    <Route path="proposal/view/:id" element={<ViewProposal />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="invoices" />}>
+                    <Route path="invoices" element={<InvoiceHead />} />
+                    <Route path="invoices/:id" element={<InvoiceView />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="activities_calendar" />}>
+                    <Route path="calendar" element={<CalendarView />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="activities_list" />}>
+                    <Route path="list" element={<Activity />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="users_roles" />}>
+                    <Route path="user&roles" element={<UserManagement />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="reports" />}>
+                    <Route path="team-analytics" element={<ReportsPage />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="email_chat" />}>
+                    <Route path="emailchat" element={<EmailChat />} />
+                  </Route>
+
+                  <Route element={<PrivateRoute permission="settings" />}>
+                    <Route path="settings" element={<Settings />} />
+                  </Route>
+                </Route>
+              </Route>
+
+              {/* LEGACY REDIRECT HANDLER (FALLBACKS TO PRESERVE EXISTING ABSOLUTE LINKS) */}
+              <Route element={<PrivateRoute />}>
+                <Route path="/dashboard" element={<div />} />
+                <Route path="/leads" element={<div />} />
+                <Route path="/leads/view/:id" element={<div />} />
+                <Route path="/createleads" element={<div />} />
+                <Route path="/deals" element={<div />} />
+                <Route path="/createDeal" element={<div />} />
+                <Route path="/createDeal/:id" element={<div />} />
+                <Route path="/Pipelineview" element={<div />} />
+                <Route path="/Pipelineview/:dealId?" element={<div />} />
+                <Route path="/proposal" element={<div />} />
+                <Route path="/proposal/sendproposal" element={<div />} />
+                <Route path="/proposal/drafts" element={<div />} />
+                <Route path="/proposal/view/:id" element={<div />} />
+                <Route path="/invoices" element={<div />} />
+                <Route path="/invoices/:id" element={<div />} />
+                <Route path="/calendar" element={<div />} />
+                <Route path="/list" element={<div />} />
+                <Route path="/user&roles" element={<div />} />
+                <Route path="/team-analytics" element={<div />} />
+                <Route path="/emailchat" element={<div />} />
+                <Route path="/settings" element={<div />} />
+                <Route path="/DealAnalysis" element={<div />} />
+                <Route path="/LossAnalysis" element={<div />} />
+                <Route path="/cltv/dashboard" element={<div />} />
+                <Route path="/cltv/client/:companyName" element={<div />} />
+                <Route path="/leaderboard" element={<div />} />
+                <Route path="/dashboard/notifications" element={<div />} />
+                <Route path="/mass-email" element={<div />} />
+                <Route path="/create-email" element={<div />} />
+                <Route path="/create-email/:id" element={<div />} />
+                <Route path="/scheduled-emails" element={<div />} />
+                <Route path="/email-history" element={<div />} />
+              </Route>
+            </Routes>
             <ToastContainer />
           </div>
         </BrowserRouter>

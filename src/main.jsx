@@ -1,11 +1,11 @@
-
-
-
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
 import axios from "axios";
 import "./index.css";
 import App from "./App.jsx";
+import { store } from "./store/store";
+import "./services/api"; // Import API config to trigger global interceptors
 
 // Context Providers
 import { ModalProvider } from "./context/ModalContext.jsx";
@@ -40,7 +40,9 @@ loadGlobalSettings().finally(() => {
     <StrictMode>
       <ModalProvider>
         <TemplateProvider>
-          <App />
+          <Provider store={store}>
+            <App />
+          </Provider>
         </TemplateProvider>
       </ModalProvider>
     </StrictMode>

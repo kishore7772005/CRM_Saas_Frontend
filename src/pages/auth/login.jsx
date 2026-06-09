@@ -1,15 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Eye, EyeOff, Building2 } from "lucide-react";
+import { setCredentials } from "../../store/authSlice";
 import { initSocket } from "../../utils/socket";
-import { Eye, EyeOff } from "lucide-react";
 import ForgotPassword from "../password/ForgotPassword";
 
-const Login = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
-  const API_SI = import.meta.env.VITE_SI_URI; 
-console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
+// Pure JavaScript JWT Decode Helper
+const decodeToken = (token) => {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      window
+        .atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error("JWT Decode Error:", e);
+    return null;
+  }
+};
 
+const Login = () => {
+  const { tenantSlug: urlSlug } = useParams();
+  const [slug, setSlug] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -19,55 +38,91 @@ console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
   const [isForgotOpen, setIsForgotOpen] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-/* ── Login Function ─────────────────────── */
+  // If slug is in URL, auto-fill it
+  useEffect(() => {
+    if (urlSlug) {
+      setSlug(urlSlug);
+    } else {
+      const storedSlug = localStorage.getItem("tenantSlug");
+      if (storedSlug) setSlug(storedSlug);
+    }
+  }, [urlSlug]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setMessage("");
+
+    const targetSlug = slug.trim().toLowerCase();
+    if (!targetSlug) {
+      setMessage("Please enter your company/tenant slug.");
+      setIsError(true);
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      const response = await axios.post(`${API_URL}/users/login`, {
+      // 1. Post to login
+      const response = await axios.post(`http://localhost:5000/${targetSlug}/api/users/login`, {
         email,
         password,
       });
 
       if (response.data.token) {
-        //  Save user & token with role permissions and profile image
-        const loggedInUser = {
-          _id: response.data._id,
-          name: response.data.name,
-          email: response.data.email,
-          role: response.data.role,
-          profileImage: response.data.profileImage // Add profile image to user object
-        };
-        localStorage.setItem("user", JSON.stringify(loggedInUser));
-        localStorage.setItem("token", response.data.token);
+        const token = response.data.token;
+        
+        // Decode token to verify parameters
+        const decoded = decodeToken(token);
+        const resolvedSlug = decoded?.slug || targetSlug;
 
-        // 🔹 Connect socket immediately after login
-        initSocket(loggedInUser._id);
+        // 2. Fetch full profile (role + permissions object)
+        const profileRes = await axios.get(`http://localhost:5000/${resolvedSlug}/api/users/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const fullUser = profileRes.data;
 
-        setMessage(response.data.message);
+        // 3. Connect real-time socket immediately
+        initSocket(fullUser._id || fullUser.id);
+
+        // 4. Update login streak leaderboard automatically
+        try {
+          await axios.post(
+            `http://localhost:5000/${resolvedSlug}/api/streak/update/${fullUser._id || fullUser.id}`,
+            {},
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+        } catch (streakErr) {
+          console.error("Streak tracker failed:", streakErr);
+        }
+
+        // 5. Store session to Redux and LocalStorage
+        dispatch(
+          setCredentials({
+            token,
+            slug: resolvedSlug,
+            user: fullUser,
+          })
+        );
+
+        setMessage(response.data.message || "Logged in successfully!");
         setIsError(false);
 
         setTimeout(() => {
-          navigate("/dashboard");
+          navigate(`/${resolvedSlug}/dashboard`);
         }, 1500);
       } else {
-        setMessage("Token missing in response");
+        setMessage("Token missing in authentication response");
         setIsError(true);
       }
     } catch (error) {
-      console.error("Login Error:", error.response?.data);
-      setMessage(error.response?.data?.message || "Login failed");
+      console.error("Login Error:", error);
+      setMessage(error.response?.data?.message || "Authentication failed. Check details.");
       setIsError(true);
     } finally {
       setIsLoading(false);
     }
-  };
-
-/* ── Toggle Password Visibility ─────────────────────── */
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
@@ -80,9 +135,12 @@ console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
               src="/images/TZI_Logo-04_-_Copy-removebg-preview.png"
               alt="TZI Logo"
               className="w-full max-w-xs mx-auto mb-6"
+              onError={(e) => {
+                e.target.src = "https://tzi.zaarapp.com//storage/uploads/logo//logo-dark.png";
+              }}
             />
-            <h2 className="text-2xl font-bold text-black-100 mt-6">Welcome Back</h2>
-            <p className="text-black-100 mt-2">Sign in to access your account</p>
+            <h2 className="text-2xl font-bold text-gray-800 mt-6">Welcome Back</h2>
+            <p className="text-gray-600 mt-2">Sign in to access your tenant CRM portal</p>
           </div>
         </div>
 
@@ -94,6 +152,9 @@ console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
               src="/images/TZI_Logo-04_-_Copy-removebg-preview.png"
               alt="TZI Logo"
               className="w-32 h-auto"
+              onError={(e) => {
+                e.target.src = "https://tzi.zaarapp.com//storage/uploads/logo//logo-dark.png";
+              }}
             />
           </div>
 
@@ -115,18 +176,36 @@ console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
 
           {/* Login Form */}
           <form className="space-y-6" onSubmit={handleLogin}>
+            {/* Show tenant slug input if not locked in route */}
+            {!urlSlug && (
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">Company / Tenant Slug</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Building2 className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    placeholder="company-slug"
+                    value={slug}
+                    onChange={(e) => setSlug(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+            )}
+
             <div>
               <label className="block text-gray-700 font-medium mb-2">Email Address</label>
-              <div className="relative">
-                <input
-                  type="email"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
+              <input
+                type="email"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
 
             <div>
@@ -143,7 +222,7 @@ console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
-                  onClick={togglePasswordVisibility}
+                  onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5 text-gray-400" />
@@ -159,7 +238,7 @@ console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
               <button
                 type="button"
                 onClick={() => setIsForgotOpen(true)}
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium transition"
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium transition cursor-pointer"
               >
                 Forgot your password?
               </button>
@@ -169,7 +248,7 @@ console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center"
+              className="w-full text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center cursor-pointer"
               style={{ backgroundColor: "#008ECC" }}
             >
               {isLoading ? (
