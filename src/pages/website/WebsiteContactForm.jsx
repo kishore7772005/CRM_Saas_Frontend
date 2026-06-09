@@ -204,7 +204,7 @@ const WebsiteContactForm = () => {
       });
 
       await axios.post(
-        "http://localhost:5000/api/public/contact-form",
+        `${API_URL}/public/contact-form`,
         dataToSend,
       );
       toast.dismiss();

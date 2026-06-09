@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Zap, Activity, Calendar, RefreshCw, Crown, Flame } from "lucide-react";
+import { Zap, Crown, Flame } from "lucide-react";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Skeleton } from "../components/ui/skeleton";
 
 // ── Won deal helper ───────────────────────────────────────────────────────────
 const isWonDeal = (s = "") => {
@@ -54,26 +52,22 @@ const CardBubbles = ({ seed = 0, count = 12, colorPalette = ["#F59E0B", "#FBBF24
 };
 
 // ── Main component ─────────────────────────────────────────────────────────────
-const StreakLeaderboard = ({ loading: externalLoading, deals = [], leads = [] }) => {
+// Props:
+//   loading      – boolean passed from AdminDashboard while it is fetching
+//   deals        – deal array from dashboard (used as fallback)
+//   leads        – lead array from dashboard (used as fallback)
+//   startDate    – ISO date string from dashboard's active filter  e.g. "2026-04-01"
+//   endDate      – ISO date string from dashboard's active filter  e.g. "2026-04-30"
+const StreakLeaderboard = ({ loading: externalLoading, deals = [], leads = [], startDate, endDate }) => {
   const [topPerformer, setTopPerformer] = useState(null);
   const [loading, setLoading]           = useState(true);
-  const [showFilters, setShowFilters]   = useState(false);
   const [isAdmin, setIsAdmin]           = useState(false);
-
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [selectedYear, setSelectedYear]   = useState(new Date().getFullYear());
 
   const API_URL = import.meta.env.VITE_API_URL;
   const token   = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  const months = [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December",
-  ];
-  const years = [2024, 2025, 2026];
-
-  // ── Bootstrap user ────────────────────────────────────────────────────────
+  // ── Bootstrap user role ───────────────────────────────────────────────────
   useEffect(() => {
     try {
       const userData = JSON.parse(localStorage.getItem("user") || "{}");
@@ -84,7 +78,7 @@ const StreakLeaderboard = ({ loading: externalLoading, deals = [], leads = [] })
     }
   }, []);
 
-  // ── Compute top performer from dashboard deals+leads ──────────────────────
+  // ── Compute top performer from dashboard deals + leads (fallback) ─────────
   const computeFallback = useCallback(() => {
     if (deals.length === 0 && leads.length === 0) return null;
 
@@ -136,37 +130,39 @@ const StreakLeaderboard = ({ loading: externalLoading, deals = [], leads = [] })
     }
   }, [deals, leads, computeFallback]);
 
-  // ── Step 2: Try backend silently — upgrade card if real data available ─────
-  const getDateRange = useCallback(() => {
-    const first = new Date(selectedYear, selectedMonth, 1);
-    const last  = new Date(selectedYear, selectedMonth + 1, 0, 23, 59, 59, 999);
-    return {
-      startDate: first.toISOString().split("T")[0],
-      endDate:   last.toISOString().split("T")[0],
-    };
-  }, [selectedMonth, selectedYear]);
-
+  // ── Step 2: Fetch real data from backend using dashboard's date range ──────
+  //    Re-runs whenever startDate or endDate changes (i.e. dashboard filter changes)
   const fetchTopPerformer = useCallback(async () => {
     if (!token) return;
     try {
-      const { startDate, endDate } = getDateRange();
+      // Use the dates passed from AdminDashboard — these already reflect the
+      // active preset (today / 7days / month / year) so no internal date
+      // calculation is needed here.
+      const params = {};
+      if (startDate) params.startDate = startDate;
+      if (endDate)   params.endDate   = endDate;
+
       const { data } = await axios.get(`${API_URL}/streak/leaderboard`, {
         headers: { Authorization: `Bearer ${token}` },
-        params:  { startDate, endDate },
+        params,
       });
+
       const rows = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : [];
       const top  = rows[0] || null;
       if (top) setTopPerformer(top);
     } catch {
-      // backend unavailable — fallback already showing, nothing to do
+      // backend unavailable — fallback already showing from deals/leads props
     } finally {
       setLoading(false);
     }
-  }, [API_URL, token, getDateRange]);
+  }, [API_URL, token, startDate, endDate]);   // ← re-runs when dashboard filter changes
 
+  // Re-fetch whenever the dashboard's resolved date range changes
   useEffect(() => {
-    fetchTopPerformer();
-  }, [selectedMonth, selectedYear]);
+    if (startDate || endDate) {
+      fetchTopPerformer();
+    }
+  }, [startDate, endDate, fetchTopPerformer]);
 
   // ── Loading skeleton ───────────────────────────────────────────────────────
   if (loading || externalLoading) {
@@ -215,10 +211,7 @@ const StreakLeaderboard = ({ loading: externalLoading, deals = [], leads = [] })
                 {isAdmin ? "Top Performer" : "📊 My Performance"}
               </span>
             </CardTitle>
-
-            
-            </div>
-          
+          </div>
         </CardHeader>
 
         <CardContent className="pt-0">
@@ -268,9 +261,9 @@ const StreakLeaderboard = ({ loading: externalLoading, deals = [], leads = [] })
                   <p className="text-lg font-bold text-orange-600">
                     {topPerformer.conversionDisplay ?? `${topPerformer.conversionRate?.toFixed(1)}%`}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  {/* <p className="text-xs text-gray-500">
                     {topPerformer.convertedLeads ?? 0}/{topPerformer.totalLeads ?? 0}
-                  </p>
+                  </p> */}
                 </div>
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-2 border border-blue-100">
                   <p className="text-xs text-gray-600 mb-1">Active Days</p>
