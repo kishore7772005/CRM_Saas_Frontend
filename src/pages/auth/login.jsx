@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Eye, EyeOff, Building2 } from "lucide-react";
-import { setCredentials } from "../../store/authSlice";
+import { setCredentials, clearCredentials } from "../../store/authSlice";
 import { initSocket } from "../../utils/socket";
 import ForgotPassword from "../password/ForgotPassword";
 
@@ -27,8 +27,6 @@ const decodeToken = (token) => {
 };
 
 const Login = () => {
-  const { tenantSlug: urlSlug } = useParams();
-  const [slug, setSlug] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -40,32 +38,21 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // If slug is in URL, auto-fill it
-  useEffect(() => {
-    if (urlSlug) {
-      setSlug(urlSlug);
-    } else {
-      const storedSlug = localStorage.getItem("tenantSlug");
-      if (storedSlug) setSlug(storedSlug);
-    }
-  }, [urlSlug]);
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  const SI_URI = import.meta.env.VITE_SI_URI || "http://localhost:5000";
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage("");
 
-    const targetSlug = slug.trim().toLowerCase();
-    if (!targetSlug) {
-      setMessage("Please enter your company/tenant slug.");
-      setIsError(true);
-      setIsLoading(false);
-      return;
-    }
+    // Clear any stale credentials/slugs from previous session
+    dispatch(clearCredentials());
 
     try {
-      // 1. Post to login
-      const response = await axios.post(`http://localhost:5000/${targetSlug}/api/users/login`, {
+      // 1. Post to login using a clean axios instance to bypass interceptors
+      const cleanAxios = axios.create();
+      const response = await cleanAxios.post(`${API_URL}/users/login`, {
         email,
         password,
       });
@@ -75,10 +62,17 @@ const Login = () => {
         
         // Decode token to verify parameters
         const decoded = decodeToken(token);
-        const resolvedSlug = decoded?.slug || targetSlug;
+        const resolvedSlug = decoded?.slug;
 
-        // 2. Fetch full profile (role + permissions object)
-        const profileRes = await axios.get(`http://localhost:5000/${resolvedSlug}/api/users/me`, {
+        if (!resolvedSlug) {
+          setMessage("Tenant slug missing from authentication response.");
+          setIsError(true);
+          setIsLoading(false);
+          return;
+        }
+
+        // 2. Fetch full profile (role + permissions object) using cleanAxios
+        const profileRes = await cleanAxios.get(`${SI_URI}/${resolvedSlug}/api/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const fullUser = profileRes.data;
@@ -86,10 +80,10 @@ const Login = () => {
         // 3. Connect real-time socket immediately
         initSocket(fullUser._id || fullUser.id);
 
-        // 4. Update login streak leaderboard automatically
+        // 4. Update login streak leaderboard automatically using cleanAxios
         try {
-          await axios.post(
-            `http://localhost:5000/${resolvedSlug}/api/streak/update/${fullUser._id || fullUser.id}`,
+          await cleanAxios.post(
+            `${SI_URI}/${resolvedSlug}/api/streak/update/${fullUser._id || fullUser.id}`,
             {},
             { headers: { Authorization: `Bearer ${token}` } }
           );
@@ -177,24 +171,7 @@ const Login = () => {
           {/* Login Form */}
           <form className="space-y-6" onSubmit={handleLogin}>
             {/* Show tenant slug input if not locked in route */}
-            {!urlSlug && (
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">Company / Tenant Slug</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Building2 className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder="company-slug"
-                    value={slug}
-                    onChange={(e) => setSlug(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-            )}
+            
 
             <div>
               <label className="block text-gray-700 font-medium mb-2">Email Address</label>

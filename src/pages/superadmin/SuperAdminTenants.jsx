@@ -28,6 +28,7 @@ const SuperAdminTenants = () => {
   const [slug, setSlug] = useState("");
   const [adminName, setAdminName] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   // Delete Confirmation modal
@@ -39,7 +40,9 @@ const SuperAdminTenants = () => {
     setError(null);
     try {
       const res = await superApi.get("/tenants");
-      if (res.data && Array.isArray(res.data.data)) {
+      if (res.data && Array.isArray(res.data.tenants)) {
+        setTenants(res.data.tenants);
+      } else if (res.data && Array.isArray(res.data.data)) {
         setTenants(res.data.data);
       } else if (res.data && Array.isArray(res.data)) {
         setTenants(res.data);
@@ -82,6 +85,7 @@ const SuperAdminTenants = () => {
         slug,
         adminEmail,
         adminName,
+        adminPassword,
       });
 
       // Clear fields & refresh
@@ -89,6 +93,7 @@ const SuperAdminTenants = () => {
       setSlug("");
       setAdminName("");
       setAdminEmail("");
+      setAdminPassword("");
       setCreateOpen(false);
       fetchTenants();
     } catch (err) {
@@ -374,6 +379,20 @@ const SuperAdminTenants = () => {
                     className="w-full border border-slate-300 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                  Administrator Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  placeholder="Secret password"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
+                />
               </div>
 
               {/* Submit Buttons */}

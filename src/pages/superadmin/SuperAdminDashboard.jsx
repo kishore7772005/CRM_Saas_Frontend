@@ -34,15 +34,17 @@ const SuperAdminDashboard = () => {
         setStats(statsRes.data.data || statsRes.data);
       } else if (statsRes.data) {
         setStats({
-          tenantsCount: statsRes.data.tenantsCount || 0,
-          activeTenantsCount: statsRes.data.activeTenantsCount || 0,
+          tenantsCount: statsRes.data.totalTenants || 0,
+          activeTenantsCount: statsRes.data.activeTenants || 0,
           totalUsers: statsRes.data.totalUsers || 0,
           totalRevenue: statsRes.data.totalRevenue || 0,
         });
       }
 
       // Parse tenants for chart data
-      if (tenantsRes.data && Array.isArray(tenantsRes.data.data)) {
+      if (tenantsRes.data && Array.isArray(tenantsRes.data.tenants)) {
+        setTenants(tenantsRes.data.tenants);
+      } else if (tenantsRes.data && Array.isArray(tenantsRes.data.data)) {
         setTenants(tenantsRes.data.data);
       } else if (tenantsRes.data && Array.isArray(tenantsRes.data)) {
         setTenants(tenantsRes.data);

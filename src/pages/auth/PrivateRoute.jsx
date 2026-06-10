@@ -18,6 +18,11 @@ const PrivateRoute = ({ permission }) => {
     return <Navigate to={`/${userSlug}/dashboard`} replace />;
   }
 
+  // If there is no tenant slug in the URL (e.g. legacy absolute links) redirect to the tenant-scoped URL
+  if (!tenantSlug && location.pathname !== "/" && !location.pathname.startsWith("/login") && !location.pathname.startsWith("/superadmin")) {
+    return <Navigate to={`/${userSlug}${location.pathname}`} replace />;
+  }
+
   try {
     // Admin role has full access
     if (user.role && user.role.name?.toLowerCase() === "admin") {

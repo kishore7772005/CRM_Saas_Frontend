@@ -14,7 +14,7 @@ export const NotificationProvider = ({ children }) => {
   const fetchNotifications = async () => {
     if (!user?._id) return;
     try {
-      const response = await axios.get(`${API_URL}/notification/${user._id}`);
+      const response = await axios.get(`${API_URL}/notifications/${user._id}`);
       setNotifications(response.data);
     } catch (error) {
       console.error("Error fetching notifications:", error);
