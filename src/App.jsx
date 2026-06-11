@@ -12,6 +12,7 @@ import SuperAdminLogin from "./pages/auth/SuperAdminLogin";
 import SuperAdminLayout from "./pages/superadmin/SuperAdminLayout";
 import SuperAdminDashboard from "./pages/superadmin/SuperAdminDashboard";
 import SuperAdminTenants from "./pages/superadmin/SuperAdminTenants";
+import CreateTenant from "./pages/superadmin/CreateTenant";
 import SuperAdminSettings from "./pages/superadmin/SuperAdminSettings";
 import SuperAdminProfile from "./pages/superadmin/SuperAdminProfile";
 
@@ -65,7 +66,13 @@ function App() {
   useEffect(() => {
     const handleStorageChange = () => {
       if (!localStorage.getItem("token") && !window.location.pathname.startsWith("/superadmin")) {
-        window.location.href = "/";
+        const pathSegments = window.location.pathname.split("/");
+        const slug = pathSegments[1];
+        if (slug && slug !== "login") {
+          window.location.href = `/${slug}/login`;
+        } else {
+          window.location.href = "/";
+        }
       }
     };
 
@@ -80,19 +87,20 @@ function App() {
           <div className="min-h-screen">
             <Routes>
               {/* PUBLIC */}
-              <Route path="/" element={<Login />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<SuperAdminLogin />} />
+              <Route path="/login" element={<SuperAdminLogin />} />
               <Route path="/:tenantSlug/login" element={<Login />} />
               <Route path="/contact" element={<WebsiteContactForm />} />
               <Route path="/reset-password/:token" element={<ResetPassword />} />
 
               {/* SUPERADMIN PORTAL */}
-              <Route path="/superadmin/login" element={<SuperAdminLogin />} />
+              <Route path="/superadmin/login" element={<Navigate to="/" replace />} />
               <Route path="/superadmin" element={<SuperAdminRoute />}>
                 <Route element={<SuperAdminLayout />}>
                   <Route index element={<Navigate to="dashboard" replace />} />
                   <Route path="dashboard" element={<SuperAdminDashboard />} />
                   <Route path="tenants" element={<SuperAdminTenants />} />
+                  <Route path="tenants/create" element={<CreateTenant />} />
                   <Route path="settings" element={<SuperAdminSettings />} />
                   <Route path="profile" element={<SuperAdminProfile />} />
                 </Route>

@@ -20,7 +20,7 @@ const SuperAdminLayout = () => {
 
   const handleLogout = () => {
     dispatch(clearSuperAdminCredentials());
-    navigate("/superadmin/login");
+    window.location.href = "/";
   };
 
   const navItems = [

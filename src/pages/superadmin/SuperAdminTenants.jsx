@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../../store/authSlice";
 import {
   Building2,
   Plus,
@@ -17,19 +20,13 @@ import {
 import { superApi } from "../../services/api";
 
 const SuperAdminTenants = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [tenants, setTenants] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Create Modal state
-  const [createOpen, setCreateOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
-  const [adminName, setAdminName] = useState("");
-  const [adminEmail, setAdminEmail] = useState("");
-  const [adminPassword, setAdminPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
   // Delete Confirmation modal
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -62,45 +59,24 @@ const SuperAdminTenants = () => {
     fetchTenants();
   }, []);
 
-  // Slugify helper
-  const handleNameChange = (val) => {
-    setName(val);
-    const generatedSlug = val
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, "") // Remove non-word chars
-      .replace(/[\s_]+/g, "-") // Replace spaces/underscores with hyphens
-      .replace(/-+/g, "-"); // Collapse consecutive hyphens
-    setSlug(generatedSlug);
-  };
-
-  const handleCreateTenant = async (e) => {
-    e.preventDefault();
-    if (!name || !slug || !adminName || !adminEmail) return;
-
-    setSubmitting(true);
+  const handleImpersonate = async (tenant) => {
     try {
-      await superApi.post("/tenants/create", {
-        name,
-        slug,
-        adminEmail,
-        adminName,
-        adminPassword,
-      });
-
-      // Clear fields & refresh
-      setName("");
-      setSlug("");
-      setAdminName("");
-      setAdminEmail("");
-      setAdminPassword("");
-      setCreateOpen(false);
-      fetchTenants();
+      const res = await superApi.post(`/tenants/${tenant._id}/impersonate`);
+      const { token, slug, user } = res.data;
+      if (token) {
+        dispatch(
+          setCredentials({
+            token,
+            slug,
+            user,
+          })
+        );
+        // Open the tenant dashboard in a new tab
+        window.open(`/${slug}/dashboard`, "_blank");
+      }
     } catch (err) {
-      console.error("Failed to create tenant:", err);
-      alert(err.response?.data?.message || err.response?.data?.error || "Failed to create tenant");
-    } finally {
-      setSubmitting(false);
+      console.error("Failed to impersonate tenant:", err);
+      alert(err.response?.data?.message || err.response?.data?.error || "Failed to log in to tenant dashboard");
     }
   };
 
@@ -168,7 +144,7 @@ const SuperAdminTenants = () => {
             <RefreshCw size={18} />
           </button>
           <button
-            onClick={() => setCreateOpen(true)}
+            onClick={() => navigate("/superadmin/tenants/create")}
             className="flex items-center space-x-2 px-4 py-2 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-700 transition-all shadow-md cursor-pointer text-sm"
           >
             <Plus size={18} />
@@ -264,15 +240,13 @@ const SuperAdminTenants = () => {
                           )}
                         </button>
                         {/* Launch portal button */}
-                        <a
-                          href={`/${t.slug}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 border border-slate-200 rounded-lg hover:bg-slate-100 text-slate-600 transition-all cursor-pointer"
-                          title="Open tenant portal"
+                        <button
+                          onClick={() => handleImpersonate(t)}
+                          className="p-1.5 border border-slate-200 rounded-lg hover:bg-slate-100 text-slate-600 transition-all cursor-pointer flex items-center justify-center"
+                          title="Open tenant portal directly"
                         >
                           <ExternalLink size={15} />
-                        </a>
+                        </button>
                         {/* Delete button */}
                         <button
                           onClick={() => setDeleteTarget(t)}
@@ -297,125 +271,7 @@ const SuperAdminTenants = () => {
         </div>
       </div>
 
-      {/* CREATE DIALOG MODAL */}
-      {createOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            {/* Modal Header */}
-            <div className="px-6 py-5 bg-slate-900 text-white flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Building2 className="text-amber-500" size={22} />
-                <h3 className="text-lg font-bold">Register New Tenant</h3>
-              </div>
-              <button
-                onClick={() => setCreateOpen(false)}
-                className="text-slate-400 hover:text-white transition-colors cursor-pointer"
-              >
-                <X size={20} />
-              </button>
-            </div>
 
-            {/* Modal Body / Form */}
-            <form onSubmit={handleCreateTenant} className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                  Organization Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Stark Industries"
-                  value={name}
-                  onChange={(e) => handleNameChange(e.target.value)}
-                  className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                  Tenant Slug
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. stark-ind"
-                  value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
-                  className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 font-mono text-xs"
-                />
-              </div>
-
-              <div className="border-t border-slate-100 my-4" />
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                  Administrator Name
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Tony Stark"
-                    value={adminName}
-                    onChange={(e) => setAdminName(e.target.value)}
-                    className="w-full border border-slate-300 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                  Administrator Email
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                  <input
-                    type="email"
-                    required
-                    placeholder="e.g. tony@stark.com"
-                    value={adminEmail}
-                    onChange={(e) => setAdminEmail(e.target.value)}
-                    className="w-full border border-slate-300 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                  Administrator Password
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="Secret password"
-                  value={adminPassword}
-                  onChange={(e) => setAdminPassword(e.target.value)}
-                  className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
-                />
-              </div>
-
-              {/* Submit Buttons */}
-              <div className="flex space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setCreateOpen(false)}
-                  className="flex-1 py-2.5 border border-slate-200 rounded-xl font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer text-sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex-1 py-2.5 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 disabled:opacity-50 cursor-pointer text-sm shadow-md"
-                >
-                  {submitting ? "Provisioning..." : "Provision Database"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* DANGER: DELETE CONFIRMATION MODAL */}
       {deleteTarget && (

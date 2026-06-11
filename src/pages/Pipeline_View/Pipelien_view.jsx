@@ -10,7 +10,7 @@
     DialogHeader,
     DialogTitle,
   } from "../../components/ui/dialog";
-  import { useNavigate } from "react-router-dom";
+  import { useNavigate, useParams } from "react-router-dom";
   import { TourProvider, useTour } from "@reactour/tour";
   import { Eye } from "lucide-react";
 
@@ -147,7 +147,7 @@
 
     const { setIsOpen, setCurrentStep } = useTour();
     const navigate = useNavigate();
-
+    const { tenantSlug } = useParams();
     const scrollRef = useRef(null);
   // Use the custom hook for Lost Deal Modal
   const {
@@ -628,12 +628,12 @@
         toast.error("You don't have permission to edit this deal");
         return;
       }
-      navigate("/createDeal", { state: { deal } });
+      navigate(`/${tenantSlug}/createDeal`, { state: { deal } });
     };
 
     // Handle view click - navigate to pipeline view page with dealId parameter
     const handleViewClick = (deal) => {
-      navigate(`/Pipelineview/${deal._id}`);
+      navigate(`/${tenantSlug}/Pipelineview/${deal._id}`);
     };
 
     // Filter deals for search query
@@ -788,7 +788,7 @@
               {userRole === "Admin" && (
                 <button
                   className="create-deal-btn bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
-                  onClick={() => navigate("/createDeal")}
+                  onClick={() => navigate(`/${tenantSlug}/createDeal`)}
                 >
                   + Create Deal
                 </button>

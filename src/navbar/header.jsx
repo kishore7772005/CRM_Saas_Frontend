@@ -114,6 +114,7 @@ const Navbar = ({ toggleSidebar }) => {
 /* ── Logout Function ─────────────────────── */
 const handleLogout = async () => {
   const token = localStorage.getItem("token");
+  const tenantSlug = localStorage.getItem("tenantSlug");
 
   try {
     await axios.post(
@@ -128,8 +129,12 @@ const handleLogout = async () => {
     localStorage.clear();
     sessionStorage.clear();
 
-    //  Force full reload (CRITICAL FIX)
-    window.location.href = "/";
+    //  Redirect to tenant-specific login page
+    if (tenantSlug) {
+      window.location.href = `/${tenantSlug}/login`;
+    } else {
+      window.location.href = "/";
+    }
   }
 };
 

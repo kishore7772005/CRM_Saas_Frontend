@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -73,6 +73,7 @@ const tourSteps = [
 /* ── Lead Table Component ─────────────────────── */
 function LeadTableComponent() {
   const navigate = useNavigate();
+  const { tenantSlug } = useParams();
   const { setIsOpen } = useTour();
 
   const [leads, setLeads] = useState([]);
@@ -287,7 +288,7 @@ const fetchLeads = useCallback(async () => {
   };
 
   const handleEdit = (leadId) => {
-    navigate(`/createleads?id=${leadId}`);
+    navigate(`/${tenantSlug}/createleads?id=${leadId}`);
     setMenuOpen(null);
   };
 
@@ -589,7 +590,7 @@ const fetchLeads = useCallback(async () => {
          {userRole === "Admin" && (
   <button
     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow flex items-center gap-2 tour-create-lead"
-    onClick={() => navigate("/createleads")}
+    onClick={() => navigate(`/${tenantSlug}/createleads`)}
   >
     <Plus className="w-4 h-4" /> Create Lead
   </button>
@@ -748,7 +749,7 @@ const fetchLeads = useCallback(async () => {
                       </div>
                       <div className="flex flex-col">
                         <span
-                          onClick={() => navigate(`/leads/view/${lead._id}`)}
+                          onClick={() => navigate(`/${tenantSlug}/leads/view/${lead._id}`)}
                           className="font-medium text-blue-600 text-sm cursor-pointer hover:underline"
                         >
                           {lead.leadName || "Unnamed Lead"}

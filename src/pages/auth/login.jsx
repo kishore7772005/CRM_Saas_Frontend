@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Eye, EyeOff, Building2 } from "lucide-react";
 import { setCredentials, clearCredentials } from "../../store/authSlice";
@@ -27,6 +27,7 @@ const decodeToken = (token) => {
 };
 
 const Login = () => {
+  const { tenantSlug } = useParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -46,13 +47,27 @@ const Login = () => {
     setIsLoading(true);
     setMessage("");
 
-    // Clear any stale credentials/slugs from previous session
+    // 1. Check if another tenant is already logged in
+    const activeToken = localStorage.getItem("token");
+    const activeSlug = localStorage.getItem("tenantSlug");
+    if (activeToken && activeSlug && activeSlug !== tenantSlug) {
+      setMessage(`Another tenant session (${activeSlug}) is already active. Please log out of that session first.`);
+      setIsError(true);
+      setIsLoading(false);
+      return;
+    }
+
+    // 2. Clear stale credentials only when safe to proceed
     dispatch(clearCredentials());
 
     try {
       // 1. Post to login using a clean axios instance to bypass interceptors
       const cleanAxios = axios.create();
-      const response = await cleanAxios.post(`${API_URL}/users/login`, {
+      const loginUrl = tenantSlug
+        ? `${SI_URI}/${tenantSlug}/api/users/login`
+        : `${API_URL}/users/login`;
+
+      const response = await cleanAxios.post(loginUrl, {
         email,
         password,
       });

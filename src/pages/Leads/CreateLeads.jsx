@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { getNames } from "country-list";
@@ -27,6 +27,7 @@ export default function CreateLeads() {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
+  const { tenantSlug } = useParams();
   const location = useLocation();
   const contactFormData = location.state?.contactFormData || null;
   const queryParams = new URLSearchParams(location.search);
@@ -436,7 +437,7 @@ export default function CreateLeads() {
         toast.success("Lead created successfully");
       }
 
-      setTimeout(() => navigate("/leads"), 1200);
+      setTimeout(() => navigate(`/${tenantSlug}/leads`), 1200);
     } catch (err) {
       console.error("Error submitting form:", err);
 

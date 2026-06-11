@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { getNames } from "country-list";
@@ -144,6 +144,7 @@ const PreviewModal = ({ file, onClose }) => {
 export default function CreateDeal() {
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
+  const { tenantSlug } = useParams();
   const location = useLocation();
   const isEditMode = location.state?.deal;
   const existingDeal = location.state?.deal || null;
@@ -481,7 +482,7 @@ export default function CreateDeal() {
         });
         toast.success("Deal created successfully");
       }
-      setTimeout(() => navigate("/deals"), 2000);
+      setTimeout(() => navigate(`/${tenantSlug}/deals`), 2000);
     } catch (err) {
       console.error("Deal operation error:", err);
       if (err.response?.data?.message) {

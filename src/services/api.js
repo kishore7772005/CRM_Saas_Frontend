@@ -26,8 +26,13 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
+      const slug = store.getState().auth.slug;
       store.dispatch(clearCredentials());
-      window.location.href = "/";
+      if (slug) {
+        window.location.href = `/${slug}/login`;
+      } else {
+        window.location.href = "/";
+      }
     }
     return Promise.reject(error);
   }
@@ -51,9 +56,9 @@ superApi.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       const isAuthRoute = error.config.url && (error.config.url.includes("/auth/login") || error.config.url.includes("/login"));
-      if (!isAuthRoute && window.location.pathname !== "/superadmin/login") {
+      if (!isAuthRoute && window.location.pathname !== "/") {
         store.dispatch(clearSuperAdminCredentials());
-        window.location.href = "/superadmin/login";
+        window.location.href = "/";
       }
     }
     return Promise.reject(error);
@@ -91,12 +96,17 @@ axios.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       const isAuthRoute = error.config.url && (error.config.url.includes("/auth/login") || error.config.url.includes("/login"));
       if (!isAuthRoute) {
-        if (window.location.pathname.startsWith("/superadmin") && window.location.pathname !== "/superadmin/login") {
+        if (window.location.pathname.startsWith("/superadmin") && window.location.pathname !== "/") {
           store.dispatch(clearSuperAdminCredentials());
-          window.location.href = "/superadmin/login";
-        } else if (!window.location.pathname.includes("/login")) {
-          store.dispatch(clearCredentials());
           window.location.href = "/";
+        } else if (!window.location.pathname.includes("/login")) {
+          const slug = store.getState().auth.slug;
+          store.dispatch(clearCredentials());
+          if (slug) {
+            window.location.href = `/${slug}/login`;
+          } else {
+            window.location.href = "/";
+          }
         }
       }
     }

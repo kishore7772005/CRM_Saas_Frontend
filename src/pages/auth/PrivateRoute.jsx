@@ -20,7 +20,7 @@ const PrivateRoute = ({ permission }) => {
 
   // If there is no tenant slug in the URL (e.g. legacy absolute links) redirect to the tenant-scoped URL
   if (!tenantSlug && location.pathname !== "/" && !location.pathname.startsWith("/login") && !location.pathname.startsWith("/superadmin")) {
-    return <Navigate to={`/${userSlug}${location.pathname}`} replace />;
+    return <Navigate to={`/${userSlug}${location.pathname}${location.search}`} replace state={location.state} />;
   }
 
   try {

@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../components/ui/dialog";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 import ReactDOM from "react-dom";
 import { TourProvider, useTour } from "@reactour/tour";
 
@@ -27,6 +27,7 @@ const dealTourSteps = [
 /* ── Fetch Deals Function ─────────────────────── */
 function AllDealsComponent() {
   const navigate = useNavigate();
+  const { tenantSlug } = useParams();
   const [searchParams] = useSearchParams();
   const statusFilter = searchParams.get("status");
   const [clientTypeFilter, setClientTypeFilter] = useState("");
@@ -152,7 +153,7 @@ function AllDealsComponent() {
   // Navigate to deal with follow-up tab open
   const handleViewFollowUpDetails = (dealId) => {
     setHoveredDeal(null);
-    navigate(`/Pipelineview/${dealId}?tab=followup`);
+    navigate(`/${tenantSlug}/Pipelineview/${dealId}?tab=followup`);
   };
 
 /* ── Format Currency Value Function ─────────────────────── */
@@ -339,7 +340,7 @@ function AllDealsComponent() {
 
 /* ── Handle Edit Function ─────────────────────── */
   const handleEdit = (deal) => {
-    navigate("/createDeal", { state: { deal } });
+    navigate(`/${tenantSlug}/createDeal`, { state: { deal } });
     setOpenDropdownId(null);
   };
 
@@ -372,7 +373,7 @@ function AllDealsComponent() {
 
 /* ── Handle Deal Name Click Function ─────────────────────── */
   const handleDealNameClick = (dealId) => {
-    navigate(`/Pipelineview/${dealId}`);
+    navigate(`/${tenantSlug}/Pipelineview/${dealId}`);
   };
 
   if (loading) {
@@ -397,7 +398,7 @@ function AllDealsComponent() {
           </button>
           {userRole === "Admin" && (
             <button
-              onClick={() => navigate("/createDeal")}
+              onClick={() => navigate(`/${tenantSlug}/createDeal`)}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 tour-create-deal"
             >
               <Plus className="w-4 h-4" /> Create Deal
@@ -415,7 +416,7 @@ function AllDealsComponent() {
             </span>
           </div>
           <button
-            onClick={() => navigate("/deals")}
+            onClick={() => navigate(`/${tenantSlug}/deals`)}
             className="text-sm text-green-600 hover:text-green-800 font-medium px-3 py-1 rounded-md hover:bg-green-100 transition-colors"
           >
             Clear Filter

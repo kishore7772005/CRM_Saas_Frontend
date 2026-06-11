@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { 
   Clock, AlertCircle, Zap, User, DollarSign, Filter, RefreshCw,
   BarChart3, AlertTriangle, Target, Eye, EyeOff, SortAsc, SortDesc,
@@ -1348,6 +1348,7 @@ function DealIntelligenceDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const navigate = useNavigate();
+  const { tenantSlug } = useParams();
 
   // Get user info
   useEffect(() => {
@@ -1524,7 +1525,7 @@ function DealIntelligenceDashboard() {
 
     try {
       if (action === "Send Proposal") {
-        navigate("/proposal", { 
+        navigate(`/${tenantSlug}/proposal`, { 
           state: { 
             proposal: { 
               dealTitle: selectedDeal.dealName, 
@@ -1538,7 +1539,7 @@ function DealIntelligenceDashboard() {
         setTimeout(() => setSelectedDeal(null), 100);
       } 
       else if (action === "Send Invoice") {
-        navigate("/invoices");
+        navigate(`/${tenantSlug}/invoices`);
         setTimeout(() => setSelectedDeal(null), 100);
       } 
       else if (action === "Do Follow-up" || action === "Make Payment Follow-up" || action === "Do Negotiation") {
@@ -1578,9 +1579,9 @@ function DealIntelligenceDashboard() {
       } 
       else if (action === "View in CLV Dashboard") {
         if (selectedDeal.companyName) {
-          navigate(`/cltv/client/${encodeURIComponent(selectedDeal.companyName)}`);
+          navigate(`/${tenantSlug}/cltv/client/${encodeURIComponent(selectedDeal.companyName)}`);
         } else {
-          navigate("/cltv/dashboard");
+          navigate(`/${tenantSlug}/cltv/dashboard`);
         }
         setModalState(prev => ({ ...prev, stage: false }));
       }
@@ -1590,7 +1591,7 @@ function DealIntelligenceDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [selectedDeal, navigate, API_URL, fetchData, deals]);
+  }, [selectedDeal, navigate, tenantSlug, API_URL, fetchData, deals]);
 
   const handleFollowUpSave = useCallback(async (followUpData) => {
     if (!selectedDeal) { 
@@ -2060,7 +2061,7 @@ function DealIntelligenceDashboard() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {canCreateDeal && (
-                  <button onClick={() => navigate("/createDeal")} 
+                  <button onClick={() => navigate(`/${tenantSlug}/createDeal`)} 
                     className="p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 rounded-xl hover:border-indigo-300 transition-colors">
                     <div className="flex flex-col items-center text-center">
                       <Plus size={20} className="text-indigo-600 mb-2" />
@@ -2187,9 +2188,9 @@ function DealIntelligenceDashboard() {
                       <button 
                         onClick={() => {
                           if (deal.companyName && deal.stage === "Closed Won") {
-                            navigate(`/cltv/client/${encodeURIComponent(deal.companyName)}`);
+                            navigate(`/${tenantSlug}/cltv/client/${encodeURIComponent(deal.companyName)}`);
                           } else {
-                            navigate("/cltv/dashboard", { replace: true });
+                            navigate(`/${tenantSlug}/cltv/dashboard`, { replace: true });
                           }
                         }} 
                         className="ml-2 px-3 py-1 text-xs font-medium bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
