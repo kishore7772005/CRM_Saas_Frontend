@@ -6,12 +6,14 @@ import "./index.css";
 import App from "./App.jsx";
 import { store } from "./store/store";
 import "./services/api"; // Import API config to trigger global interceptors
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Context Providers
 import { ModalProvider } from "./context/ModalContext.jsx";
 import { TemplateProvider } from "./context/TemplateContext.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
+const queryClient = new QueryClient();
 
 const loadGlobalSettings = async () => {
   try {
@@ -38,13 +40,15 @@ const loadGlobalSettings = async () => {
 loadGlobalSettings().finally(() => {
   createRoot(document.getElementById("root")).render(
     <StrictMode>
-      <ModalProvider>
-        <TemplateProvider>
-          <Provider store={store}>
-            <App />
-          </Provider>
-        </TemplateProvider>
-      </ModalProvider>
+      <QueryClientProvider client={queryClient}>
+        <ModalProvider>
+          <TemplateProvider>
+            <Provider store={store}>
+              <App />
+            </Provider>
+          </TemplateProvider>
+        </ModalProvider>
+      </QueryClientProvider>
     </StrictMode>
   );
 });

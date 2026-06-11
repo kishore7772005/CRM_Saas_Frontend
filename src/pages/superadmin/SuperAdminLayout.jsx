@@ -10,6 +10,7 @@ import {
   Menu,
   X,
   ShieldAlert,
+  CreditCard,
 } from "lucide-react";
 import { clearSuperAdminCredentials } from "../../store/authSlice";
 
@@ -26,6 +27,7 @@ const SuperAdminLayout = () => {
   const navItems = [
     { to: "/superadmin/dashboard", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
     { to: "/superadmin/tenants", icon: <Building2 size={20} />, label: "Tenants" },
+    { to: "/superadmin/subscription-plans", icon: <CreditCard size={20} />, label: "Subscription plans" },
     { to: "/superadmin/settings", icon: <Settings size={20} />, label: "Settings" },
     { to: "/superadmin/profile", icon: <User size={20} />, label: "Profile" },
   ];

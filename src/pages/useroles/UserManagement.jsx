@@ -8,6 +8,7 @@ import EditRoleModal from "./EditRoleModal";
 import DeleteModal from "./DeleteModal";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { useSelector } from "react-redux";
 import {
   ChevronLeft,
   ChevronRight,
@@ -100,12 +101,17 @@ function UserManagementInner() {
   const API_URL = import.meta.env.VITE_API_URL;
   const API_SI  = import.meta.env.VITE_SI_URI;
 
+  const { user } = useSelector((state) => state.auth);
+
   const [roles,              setRoles]              = useState([]);
   const [users,              setUsers]              = useState([]);
   const [currentPageUsers,   setCurrentPageUsers]   = useState(1);
   const [currentPageRoles,   setCurrentPageRoles]   = useState(1);
   const [itemsPerPage] = useState(5); 
   const [selectedItem,       setSelectedItem]       = useState(null);
+
+  const limit = user?.tenantLimit?.max_users || 0;
+  const isLimitReached = limit > 0 && users.length >= limit;
   const [actionType,         setActionType]         = useState("");
   const [itemType,           setItemType]           = useState("");
   const [searchUserQuery,    setSearchUserQuery]    = useState("");
@@ -338,7 +344,9 @@ function UserManagementInner() {
               <p className="text-gray-600 mt-1 text-sm">Manage users and their access permissions</p>
             </div>
             <div className="flex flex-wrap gap-3 items-center justify-center">
-              <div className="add-user-btn"><AddUserModal onUserCreated={fetchUsers} /></div>
+              <div className="add-user-btn">
+                <AddUserModal onUserCreated={fetchUsers} disabled={isLimitReached} />
+              </div>
               <div className="create-role-btn"><CreateRoleModal onRoleCreated={fetchRoles} /></div>
               <button
                 onClick={startTour}
@@ -386,6 +394,19 @@ function UserManagementInner() {
           {/* ══ Users Table ══════════════════════════════════════════════════ */}
           <div className={`transition-all duration-300 w-full max-w-6xl ${activeSlide === "users" ? "block" : "hidden"}`}>
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden users-table">
+
+              {/* Plan Limit Warning Banner */}
+              {isLimitReached && (
+                <div className="bg-amber-50 border-b border-amber-200 px-6 py-4 text-amber-800 text-sm flex items-start space-x-2.5 animate-in fade-in duration-200">
+                  <span className="text-lg mt-0.5">⚠️</span>
+                  <div className="text-left">
+                    <span className="font-bold block text-amber-900">User limit reached for your current plan</span>
+                    <span className="text-amber-700 text-xs mt-0.5 block leading-relaxed">
+                      You have reached the maximum allowed limit of {limit} users for your current plan. To add more users, please contact superadmin to upgrade your subscription.
+                    </span>
+                  </div>
+                </div>
+              )}
 
               {/* Controls */}
               <div className="px-6 py-4 border-b border-gray-200">

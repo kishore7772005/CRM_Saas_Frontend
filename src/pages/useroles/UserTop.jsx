@@ -13,7 +13,7 @@ import { Eye, EyeOff, X } from "lucide-react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
-export default function AddUserModal({ onUserCreated }) {
+export default function AddUserModal({ onUserCreated, disabled }) {
   const API_URL = import.meta.env.VITE_API_URL;
   const API_SI  = import.meta.env.VITE_SI_URI;
 
@@ -334,7 +334,10 @@ export default function AddUserModal({ onUserCreated }) {
 
       <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+          <button
+            disabled={disabled}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             Add User
           </button>
         </DialogTrigger>

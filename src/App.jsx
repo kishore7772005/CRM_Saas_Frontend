@@ -15,6 +15,10 @@ import SuperAdminTenants from "./pages/superadmin/SuperAdminTenants";
 import CreateTenant from "./pages/superadmin/CreateTenant";
 import SuperAdminSettings from "./pages/superadmin/SuperAdminSettings";
 import SuperAdminProfile from "./pages/superadmin/SuperAdminProfile";
+import SubscriptionPlans from "./pages/superadmin/SubscriptionPlans";
+import CreatePlan from "./pages/superadmin/SubscriptionPlans/CreatePlan";
+import EditPlan from "./pages/superadmin/SubscriptionPlans/EditPlan";
+import PlanDetail from "./pages/superadmin/SubscriptionPlans/PlanDetail";
 
 // Providers
 import { NotificationProvider } from "./context/NotificationContext";
@@ -101,6 +105,10 @@ function App() {
                   <Route path="dashboard" element={<SuperAdminDashboard />} />
                   <Route path="tenants" element={<SuperAdminTenants />} />
                   <Route path="tenants/create" element={<CreateTenant />} />
+                  <Route path="subscription-plans" element={<SubscriptionPlans />} />
+                  <Route path="subscription-plans/create" element={<CreatePlan />} />
+                  <Route path="subscription-plans/:id/edit" element={<EditPlan />} />
+                  <Route path="subscription-plans/:id" element={<PlanDetail />} />
                   <Route path="settings" element={<SuperAdminSettings />} />
                   <Route path="profile" element={<SuperAdminProfile />} />
                 </Route>
