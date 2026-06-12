@@ -35,6 +35,7 @@ const Login = () => {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isForgotOpen, setIsForgotOpen] = useState(false);
+  const [showUpgradeButton, setShowUpgradeButton] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -46,6 +47,7 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     setMessage("");
+    setShowUpgradeButton(false);
 
     // 1. Check if another tenant is already logged in
     const activeToken = localStorage.getItem("token");
@@ -115,6 +117,10 @@ const Login = () => {
           })
         );
 
+        if (response.data.isDbRefreshed) {
+          localStorage.setItem("db_refreshed_toast", "true");
+        }
+
         setMessage(response.data.message || "Logged in successfully!");
         setIsError(false);
 
@@ -129,6 +135,9 @@ const Login = () => {
       console.error("Login Error:", error);
       setMessage(error.response?.data?.message || "Authentication failed. Check details.");
       setIsError(true);
+      if (error.response?.data?.planExpired) {
+        setShowUpgradeButton(true);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -175,11 +184,21 @@ const Login = () => {
           {/* Message Display */}
           {message && (
             <div
-              className={`rounded-lg p-3 mb-6 text-center ${
-                isError ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
+              className={`rounded-lg p-4 mb-6 text-center shadow-sm flex flex-col items-center justify-center space-y-3 ${
+                isError ? "bg-red-50 text-red-700 border border-red-150" : "bg-green-50 text-green-700 border border-green-150"
               }`}
             >
-              {message}
+              <span className="font-semibold text-sm leading-relaxed">{message}</span>
+              
+              {isError && showUpgradeButton && (
+                <button
+                  type="button"
+                  onClick={() => navigate(`/${tenantSlug}/upgrade`)}
+                  className="px-5 py-2 bg-red-600 text-white rounded-xl font-bold text-xs hover:bg-red-700 transition cursor-pointer shadow-sm hover:shadow-md mt-1 animate-pulse"
+                >
+                  Upgrade Plan Now
+                </button>
+              )}
             </div>
           )}
 
@@ -225,12 +244,12 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Forgot Password */}
-            <div className="text-right">
+            {/* Forgot Password Link only */}
+            <div className="flex justify-end text-sm">
               <button
                 type="button"
                 onClick={() => setIsForgotOpen(true)}
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium transition cursor-pointer"
+                className="text-blue-600 hover:text-blue-800 font-medium transition cursor-pointer"
               >
                 Forgot your password?
               </button>

@@ -21,6 +21,7 @@ import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import StreakLeaderboard from "../pages/StreakLeaderboard";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -793,6 +794,12 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchDashboardData();
     const interval = setInterval(fetchDashboardData, 60_000);
+
+    if (localStorage.getItem("db_refreshed_toast") === "true") {
+      toast.success("Your database has been refreshed successfully!");
+      localStorage.removeItem("db_refreshed_toast");
+    }
+
     return () => clearInterval(interval);
   }, [fetchDashboardData]);
 

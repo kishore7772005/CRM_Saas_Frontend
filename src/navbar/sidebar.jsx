@@ -360,6 +360,15 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           label="Team Analytics"
           hasPermission={isAdmin || userPermissions.reports}
         />
+
+        {/* Upgrade Plan (Directs to the Pricing Plans Catalog) */}
+        {isAdmin && (
+          <SidebarItem
+            to={`/${location.pathname.split("/")[1]}/plans`}
+            icon={<TrendingUp />}
+            label="Upgrade Plan"
+          />
+        )}
       </nav>
     </aside>
   );

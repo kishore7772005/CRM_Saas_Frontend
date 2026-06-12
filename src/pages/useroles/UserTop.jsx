@@ -271,6 +271,25 @@ export default function AddUserModal({ onUserCreated, disabled }) {
       });
     } catch (err) {
       if (err.response?.data?.errors) setErrors(err.response.data.errors);
+      
+      const isLimitErr = err.response?.data?.limitExceeded;
+      if (isLimitErr) {
+        toast((t) => (
+          <div className="flex flex-col space-y-2">
+            <span className="font-semibold text-red-700">{err.response.data.message}</span>
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                const slug = window.location.pathname.split("/")[1];
+                window.location.href = `/${slug}/upgrade`;
+              }}
+              className="px-3 py-1.5 bg-[#008ECC] text-white rounded font-bold text-xs hover:bg-blue-700 transition cursor-pointer self-start"
+            >
+              Upgrade Plan
+            </button>
+          </div>
+        ), { duration: 8000 });
+      }
     } finally {
       setIsSubmitting(false);
     }

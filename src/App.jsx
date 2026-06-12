@@ -19,6 +19,10 @@ import SubscriptionPlans from "./pages/superadmin/SubscriptionPlans";
 import CreatePlan from "./pages/superadmin/SubscriptionPlans/CreatePlan";
 import EditPlan from "./pages/superadmin/SubscriptionPlans/EditPlan";
 import PlanDetail from "./pages/superadmin/SubscriptionPlans/PlanDetail";
+import UpgradePlan from "./pages/superadmin/SubscriptionPlans/UpgradePlan";
+import ViewPlans from "./pages/superadmin/SubscriptionPlans/ViewPlans";
+import UpgradeRequests from "./pages/superadmin/UpgradeRequests";
+import TenantDetail from "./pages/superadmin/TenantDetail";
 
 // Providers
 import { NotificationProvider } from "./context/NotificationContext";
@@ -94,6 +98,8 @@ function App() {
               <Route path="/" element={<SuperAdminLogin />} />
               <Route path="/login" element={<SuperAdminLogin />} />
               <Route path="/:tenantSlug/login" element={<Login />} />
+              <Route path="/:tenantSlug/upgrade" element={<UpgradePlan />} />
+              <Route path="/:tenantSlug/plans" element={<ViewPlans />} />
               <Route path="/contact" element={<WebsiteContactForm />} />
               <Route path="/reset-password/:token" element={<ResetPassword />} />
 
@@ -104,7 +110,9 @@ function App() {
                   <Route index element={<Navigate to="dashboard" replace />} />
                   <Route path="dashboard" element={<SuperAdminDashboard />} />
                   <Route path="tenants" element={<SuperAdminTenants />} />
+                  <Route path="tenants/:id" element={<TenantDetail />} />
                   <Route path="tenants/create" element={<CreateTenant />} />
+                  <Route path="upgrade-requests" element={<UpgradeRequests />} />
                   <Route path="subscription-plans" element={<SubscriptionPlans />} />
                   <Route path="subscription-plans/create" element={<CreatePlan />} />
                   <Route path="subscription-plans/:id/edit" element={<EditPlan />} />

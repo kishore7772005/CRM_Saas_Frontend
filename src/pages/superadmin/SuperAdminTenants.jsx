@@ -183,6 +183,7 @@ const SuperAdminTenants = () => {
               <tr className="bg-slate-100/50 text-slate-600 uppercase text-xs font-bold border-b border-slate-200">
                 <th className="px-6 py-4">Company Name</th>
                 <th className="px-6 py-4">Slug</th>
+                <th className="px-6 py-4">Current Plan</th>
                 <th className="px-6 py-4">Administrator</th>
                 <th className="px-6 py-4">Created Date</th>
                 <th className="px-6 py-4 text-center">Status</th>
@@ -192,7 +193,7 @@ const SuperAdminTenants = () => {
             <tbody className="divide-y divide-slate-100 text-slate-700 text-sm">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
                     <div className="flex flex-col items-center justify-center space-y-2">
                       <RefreshCw className="animate-spin text-[#008ecc]" size={32} />
                       <span className="font-medium">Querying platform databases...</span>
@@ -202,9 +203,17 @@ const SuperAdminTenants = () => {
               ) : filteredTenants.length > 0 ? (
                 filteredTenants.map((t) => (
                   <tr key={t._id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="px-6 py-4 font-bold text-slate-900">{t.name}</td>
+                    <td
+                      className="px-6 py-4 font-bold text-slate-900 cursor-pointer hover:text-[#008ecc] hover:underline"
+                      onClick={() => navigate(`/superadmin/tenants/${t._id}`)}
+                    >
+                      {t.name}
+                    </td>
                     <td className="px-6 py-4 font-mono text-xs text-[#008ecc] bg-[#f2fbff] rounded px-2.5 py-1 inline-block my-3 ml-6 border border-blue-100 font-semibold">
                       {t.slug}
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-slate-800">
+                      {t.plan_id?.plan_name || "Trial / Custom"}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { Building2, Users, CheckCircle, TrendingUp, RefreshCw, AlertCircle } from "lucide-react";
+import { Building2, Users, CheckCircle, TrendingUp, RefreshCw, AlertCircle, ArrowUpCircle } from "lucide-react";
 import { superApi } from "../../services/api";
 import { Skeleton } from "../../components/ui/skeleton";
+import { toast } from "react-toastify";
 
 const COLORS = ["#008ecc", "#10B981", "#EF4444", "#F59E0B"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -18,15 +19,18 @@ const SuperAdminDashboard = () => {
     totalRevenue: 0,
   });
   const [tenants, setTenants] = useState([]);
+  const [upgradeRequests, setUpgradeRequests] = useState([]);
+  const [processingId, setProcessingId] = useState(null);
 
   const fetchStats = async () => {
     setLoading(true);
     setError(null);
     try {
-      // Fetch both stats and tenants list in parallel for charts
-      const [statsRes, tenantsRes] = await Promise.all([
+      // Fetch stats, tenants list, and upgrade requests in parallel
+      const [statsRes, tenantsRes, upgradesRes] = await Promise.all([
         superApi.get("/dashboard/stats"),
         superApi.get("/tenants"),
+        superApi.get("/tenants/upgrade-requests"),
       ]);
 
       // Parse stats
@@ -51,11 +55,17 @@ const SuperAdminDashboard = () => {
       } else {
         setTenants([]);
       }
+
+      // Parse upgrades
+      if (upgradesRes.data?.success) {
+        setUpgradeRequests(upgradesRes.data.requests || []);
+      }
     } catch (err) {
       console.error("Failed to fetch superadmin stats:", err);
       setError("Failed to load platform metrics. Please check your backend connection.");
       setStats({ tenantsCount: 0, activeTenantsCount: 0, totalUsers: 0, totalRevenue: 0 });
       setTenants([]);
+      setUpgradeRequests([]);
     } finally {
       setLoading(false);
     }
@@ -64,6 +74,24 @@ const SuperAdminDashboard = () => {
   useEffect(() => {
     fetchStats();
   }, []);
+
+  const handleApproveUpgrade = async (id) => {
+    setProcessingId(id);
+    try {
+      const res = await superApi.post(`/tenants/upgrade-approve/${id}`);
+      if (res.data?.success) {
+        toast.success("Upgrade approved, database refreshed, and activation email dispatched!");
+        fetchStats();
+      } else {
+        toast.error("Failed to process approval request.");
+      }
+    } catch (err) {
+      console.error("Failed to approve upgrade request:", err);
+      toast.error(err.response?.data?.error || "Error approving upgrade request.");
+    } finally {
+      setProcessingId(null);
+    }
+  };
 
   const cardData = [
     {
