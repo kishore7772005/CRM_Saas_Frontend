@@ -94,7 +94,7 @@ const CreateTenant = () => {
       <div className="flex items-center space-x-4">
         <button
           onClick={() => navigate("/superadmin/tenants")}
-          className="p-2 border border-slate-200 rounded-xl bg-white hover:bg-slate-50 text-slate-600 transition-all cursor-pointer shadow-sm"
+          className="p-2 border border-slate-200 rounded-xl bg-white hover:border-[#008ecc]/45 hover:text-[#008ecc] text-slate-600 transition-all cursor-pointer shadow-sm"
         >
           <ArrowLeft size={18} />
         </button>
@@ -119,8 +119,8 @@ const CreateTenant = () => {
           
           {/* Organization setup card */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="px-6 py-5 bg-slate-900 text-white flex items-center space-x-2">
-              <Building2 className="text-amber-500" size={22} />
+            <div className="px-6 py-5 bg-slate-50 border-b border-slate-100 flex items-center space-x-2 text-slate-800">
+              <Building2 className="text-[#008ecc]" size={22} />
               <h3 className="text-lg font-bold">Organization & Database Setup</h3>
             </div>
 
@@ -136,7 +136,7 @@ const CreateTenant = () => {
                     placeholder="e.g. Stark Industries"
                     value={name}
                     onChange={(e) => handleNameChange(e.target.value)}
-                    className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all shadow-inner"
+                    className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all shadow-inner"
                   />
                 </div>
 
@@ -150,7 +150,7 @@ const CreateTenant = () => {
                     placeholder="e.g. stark-ind"
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
-                    className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all font-mono text-xs shadow-inner bg-slate-50"
+                    className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all font-mono text-xs shadow-inner bg-slate-50 text-[#008ecc] font-semibold"
                   />
                 </div>
               </div>
@@ -159,14 +159,14 @@ const CreateTenant = () => {
 
           {/* Admin user card */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="px-6 py-5 bg-slate-900 text-white flex items-center space-x-2">
-              <User className="text-amber-500" size={20} />
+            <div className="px-6 py-5 bg-slate-50 border-b border-slate-100 flex items-center space-x-2 text-slate-800">
+              <User className="text-[#008ecc]" size={20} />
               <h3 className="text-lg font-bold">Administrator Credentials</h3>
             </div>
 
             <div className="p-6 space-y-6">
-              <div className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start space-x-2 text-slate-600">
-                <User className="flex-shrink-0 mt-0.5 text-slate-500" size={16} />
+              <div className="px-4 py-3 bg-[#f2fbff] border border-blue-100 rounded-xl flex items-start space-x-2 text-slate-600">
+                <User className="flex-shrink-0 mt-0.5 text-[#008ecc]" size={16} />
                 <span className="text-xs leading-relaxed">
                   This setup automatically spawns a dedicated database, registers Admin and Sales roles, and provisions the initial Administrator account below.
                 </span>
@@ -185,7 +185,7 @@ const CreateTenant = () => {
                       placeholder="e.g. Tony Stark"
                       value={adminName}
                       onChange={(e) => setAdminName(e.target.value)}
-                      className="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all shadow-inner"
+                      className="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all shadow-inner"
                     />
                   </div>
                 </div>
@@ -202,7 +202,7 @@ const CreateTenant = () => {
                       placeholder="e.g. tony@stark.com"
                       value={adminEmail}
                       onChange={(e) => setAdminEmail(e.target.value)}
-                      className="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all shadow-inner"
+                      className="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all shadow-inner"
                     />
                   </div>
                 </div>
@@ -231,7 +231,8 @@ const CreateTenant = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="flex-1 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-850 disabled:opacity-50 transition-all cursor-pointer text-sm shadow-md flex items-center justify-center space-x-2"
+              className="flex-1 py-3 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:opacity-50 transition-all cursor-pointer text-sm shadow-md flex items-center justify-center space-x-2 animate-pulse-soft"
+              style={{ backgroundColor: "#008ecc" }}
             >
               {submitting ? (
                 <>
@@ -261,7 +262,7 @@ const CreateTenant = () => {
                 <select
                   value={selectedPlanId}
                   onChange={(e) => setSelectedPlanId(e.target.value)}
-                  className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all bg-white"
+                  className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all bg-white"
                   disabled={loadingPlans}
                 >
                   <option value="">No Plan (Default Trial)</option>
@@ -277,9 +278,9 @@ const CreateTenant = () => {
 
           {/* Preview panel */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="px-6 py-4 bg-slate-55 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+            <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Subscription Preview</span>
-              <span className="bg-amber-50 text-amber-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-amber-200 uppercase tracking-wider">
+              <span className="bg-[#f2fbff] text-[#008ecc] text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-blue-100 uppercase tracking-wider">
                 {selectedPlanId ? "Selected Plan" : "Default Trial"}
               </span>
             </div>

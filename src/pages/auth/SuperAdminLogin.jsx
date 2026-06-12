@@ -50,14 +50,21 @@ const SuperAdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="flex flex-col lg:flex-row w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden">
         {/* Left Side - Image/Info */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 items-center justify-center p-8">
-          <div className="text-center text-white">
-            <ShieldAlert size={80} className="mx-auto mb-6 text-amber-500 animate-pulse" />
-            <h2 className="text-3xl font-extrabold tracking-tight">SuperAdmin portal</h2>
-            <p className="text-slate-300 mt-3 max-w-xs mx-auto">
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 items-center justify-center p-8">
+          <div className="text-center">
+            <img
+              src="/images/TZI_Logo-04_-_Copy-removebg-preview.png"
+              alt="TZI Logo"
+              className="w-full max-w-xs mx-auto mb-6"
+              onError={(e) => {
+                e.target.src = "https://tzi.zaarapp.com//storage/uploads/logo//logo-dark.png";
+              }}
+            />
+            <h2 className="text-3xl font-extrabold tracking-tight text-gray-800">SuperAdmin Portal</h2>
+            <p className="text-gray-600 mt-3 max-w-xs mx-auto">
               Secure administrative gateway to manage tenants, view system metrics, and customize platform settings.
             </p>
           </div>
@@ -65,8 +72,15 @@ const SuperAdminLogin = () => {
 
         {/* Right Side - Login Form */}
         <div className="flex flex-col justify-center w-full lg:w-1/2 p-8 lg:p-12 bg-white">
-          <div className="mb-6 lg:hidden flex justify-center text-slate-800">
-            <ShieldAlert size={48} className="text-amber-500" />
+          <div className="mb-6 lg:hidden flex justify-center">
+            <img
+              src="/images/TZI_Logo-04_-_Copy-removebg-preview.png"
+              alt="TZI Logo"
+              className="w-32 h-auto"
+              onError={(e) => {
+                e.target.src = "https://tzi.zaarapp.com//storage/uploads/logo//logo-dark.png";
+              }}
+            />
           </div>
 
           <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center lg:text-left">Administration</h2>
@@ -91,7 +105,7 @@ const SuperAdminLogin = () => {
               <label className="block text-gray-700 font-medium mb-2">Admin Email</label>
               <input
                 type="email"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-transparent transition"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                 placeholder="admin@platform.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -104,7 +118,7 @@ const SuperAdminLogin = () => {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-transparent transition pr-10"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition pr-10"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -128,7 +142,8 @@ const SuperAdminLogin = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full text-white py-3 rounded-lg font-medium bg-slate-800 hover:bg-slate-700 transition flex items-center justify-center cursor-pointer shadow-lg"
+              className="w-full text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center cursor-pointer shadow-lg"
+              style={{ backgroundColor: "#008ECC" }}
             >
               {isLoading ? (
                 <>

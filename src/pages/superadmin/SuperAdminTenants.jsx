@@ -138,14 +138,15 @@ const SuperAdminTenants = () => {
         <div className="flex items-center space-x-3">
           <button
             onClick={fetchTenants}
-            className="p-2 border border-slate-200 rounded-xl bg-white hover:bg-slate-50 text-slate-600 transition-all cursor-pointer shadow-sm"
+            className="p-2 border border-slate-200 rounded-xl bg-white hover:border-[#008ecc]/40 hover:text-[#008ecc] text-slate-600 transition-all cursor-pointer shadow-sm"
             title="Refresh database"
           >
             <RefreshCw size={18} />
           </button>
           <button
             onClick={() => navigate("/superadmin/tenants/create")}
-            className="flex items-center space-x-2 px-4 py-2 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-700 transition-all shadow-md cursor-pointer text-sm"
+            className="flex items-center space-x-2 px-4 py-2 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-md cursor-pointer text-sm"
+            style={{ backgroundColor: "#008ecc" }}
           >
             <Plus size={18} />
             <span>Create Tenant</span>
@@ -160,7 +161,7 @@ const SuperAdminTenants = () => {
       )}
 
       {/* Control panel and Table */}
-      <div className="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         {/* Search Toolbar */}
         <div className="p-5 border-b border-slate-200 bg-slate-50/50 flex items-center">
           <div className="relative w-full max-w-md">
@@ -170,7 +171,7 @@ const SuperAdminTenants = () => {
               placeholder="Search by company name, slug, or admin details..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-transparent bg-white shadow-inner"
+              className="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] focus:border-transparent bg-white shadow-inner"
             />
           </div>
         </div>
@@ -193,7 +194,7 @@ const SuperAdminTenants = () => {
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
                     <div className="flex flex-col items-center justify-center space-y-2">
-                      <RefreshCw className="animate-spin text-slate-300" size={32} />
+                      <RefreshCw className="animate-spin text-[#008ecc]" size={32} />
                       <span className="font-medium">Querying platform databases...</span>
                     </div>
                   </td>
@@ -202,7 +203,7 @@ const SuperAdminTenants = () => {
                 filteredTenants.map((t) => (
                   <tr key={t._id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="px-6 py-4 font-bold text-slate-900">{t.name}</td>
-                    <td className="px-6 py-4 font-mono text-xs text-slate-500 bg-slate-50 rounded px-1.5 py-0.5 inline-block my-3 ml-6 border">
+                    <td className="px-6 py-4 font-mono text-xs text-[#008ecc] bg-[#f2fbff] rounded px-2.5 py-1 inline-block my-3 ml-6 border border-blue-100 font-semibold">
                       {t.slug}
                     </td>
                     <td className="px-6 py-4">
@@ -230,11 +231,11 @@ const SuperAdminTenants = () => {
                         {/* Toggle active button */}
                         <button
                           onClick={() => handleToggleActive(t._id, t.isActive)}
-                          className="text-slate-500 hover:text-slate-950 transition-colors cursor-pointer"
+                          className="text-slate-500 hover:text-[#008ecc] transition-colors cursor-pointer"
                           title={t.isActive ? "Deactivate Tenant" : "Activate Tenant"}
                         >
                           {t.isActive ? (
-                            <ToggleRight size={28} className="text-slate-800" />
+                            <ToggleRight size={28} className="text-[#008ecc]" />
                           ) : (
                             <ToggleLeft size={28} className="text-slate-400" />
                           )}
@@ -242,7 +243,7 @@ const SuperAdminTenants = () => {
                         {/* Launch portal button */}
                         <button
                           onClick={() => handleImpersonate(t)}
-                          className="p-1.5 border border-slate-200 rounded-lg hover:bg-slate-100 text-slate-600 transition-all cursor-pointer flex items-center justify-center"
+                          className="p-1.5 border border-slate-200 rounded-lg hover:border-[#008ecc]/40 hover:text-[#008ecc] transition-all cursor-pointer flex items-center justify-center"
                           title="Open tenant portal directly"
                         >
                           <ExternalLink size={15} />
@@ -270,8 +271,6 @@ const SuperAdminTenants = () => {
           </table>
         </div>
       </div>
-
-
 
       {/* DANGER: DELETE CONFIRMATION MODAL */}
       {deleteTarget && (

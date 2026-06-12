@@ -5,7 +5,7 @@ import { Building2, Users, CheckCircle, TrendingUp, RefreshCw, AlertCircle } fro
 import { superApi } from "../../services/api";
 import { Skeleton } from "../../components/ui/skeleton";
 
-const COLORS = ["#3B82F6", "#10B981", "#EF4444", "#F59E0B"];
+const COLORS = ["#008ecc", "#10B981", "#EF4444", "#F59E0B"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const SuperAdminDashboard = () => {
@@ -70,29 +70,29 @@ const SuperAdminDashboard = () => {
       title: "Total Tenants",
       value: stats.tenantsCount,
       description: "Registered organizations",
-      icon: <Building2 className="text-blue-500" size={24} />,
-      bg: "bg-blue-50/50",
+      icon: <Building2 className="text-[#008ecc]" size={24} />,
+      bg: "bg-[#f2fbff] border border-blue-100",
     },
     {
       title: "Active Tenants",
       value: stats.activeTenantsCount,
       description: `${Math.max(0, stats.tenantsCount - stats.activeTenantsCount)} inactive`,
       icon: <CheckCircle className="text-green-500" size={24} />,
-      bg: "bg-green-50/50",
+      bg: "bg-green-50/50 border border-green-100",
     },
     {
       title: "Platform Users",
       value: stats.totalUsers,
       description: "Total across all tenants",
       icon: <Users className="text-purple-500" size={24} />,
-      bg: "bg-purple-50/50",
+      bg: "bg-purple-50/50 border border-purple-100",
     },
     {
       title: "Platform Revenue",
       value: stats.totalRevenue ? `$${Number(stats.totalRevenue).toLocaleString()}` : "$0",
       description: "Aggregated subscriptions",
       icon: <TrendingUp className="text-amber-500" size={24} />,
-      bg: "bg-amber-50/50",
+      bg: "bg-amber-50/50 border border-amber-100",
     },
   ];
 
@@ -126,7 +126,7 @@ const SuperAdminDashboard = () => {
         <button
           onClick={fetchStats}
           disabled={loading}
-          className="flex items-center space-x-2 px-4 py-2 border border-slate-200 rounded-xl bg-white text-slate-700 font-medium hover:bg-slate-50 transition-all cursor-pointer shadow-sm text-sm active:scale-95 disabled:opacity-50"
+          className="flex items-center space-x-2 px-4 py-2 border border-slate-200 rounded-xl bg-white text-slate-700 font-medium hover:border-[#008ecc]/40 hover:text-[#008ecc] transition-all cursor-pointer shadow-sm text-sm active:scale-95 disabled:opacity-50"
         >
           <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
           <span>Refresh</span>
@@ -143,7 +143,7 @@ const SuperAdminDashboard = () => {
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {cardData.map((card, i) => (
-          <Card key={i} className="border-0 shadow-md bg-white overflow-hidden hover:shadow-lg transition-all duration-200">
+          <Card key={i} className="border border-slate-100 shadow-sm bg-white overflow-hidden hover:shadow-md transition-all duration-200 rounded-2xl">
             <CardContent className="p-6">
               {loading ? (
                 <div className="space-y-3">
@@ -169,7 +169,7 @@ const SuperAdminDashboard = () => {
       {/* Charts Panel */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Registration Trend */}
-        <Card className="lg:col-span-2 border-0 shadow-md bg-white">
+        <Card className="lg:col-span-2 border border-slate-100 shadow-sm bg-white rounded-2xl">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-bold text-slate-800">Tenant Registrations</CardTitle>
             <CardDescription>Monthly tenant sign-ups for {currentYear} (from database).</CardDescription>
@@ -190,7 +190,7 @@ const SuperAdminDashboard = () => {
                     <XAxis dataKey="month" stroke="#94A3B8" tickLine={false} axisLine={false} fontSize={12} />
                     <YAxis stroke="#94A3B8" tickLine={false} axisLine={false} fontSize={12} allowDecimals={false} />
                     <Tooltip contentStyle={{ borderRadius: "12px", border: "1px solid #E2E8F0" }} />
-                    <Bar dataKey="tenants" name="Tenants Registered" fill="#3B82F6" radius={[6, 6, 0, 0]} barSize={32} />
+                    <Bar dataKey="tenants" name="Tenants Registered" fill="#008ecc" radius={[6, 6, 0, 0]} barSize={32} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -199,7 +199,7 @@ const SuperAdminDashboard = () => {
         </Card>
 
         {/* Tenant Status Distribution */}
-        <Card className="border-0 shadow-md bg-white">
+        <Card className="border border-slate-100 shadow-sm bg-white rounded-2xl">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-bold text-slate-800">Tenant Distribution</CardTitle>
             <CardDescription>Active vs inactive status (from database).</CardDescription>
@@ -218,13 +218,13 @@ const SuperAdminDashboard = () => {
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
-                        data={distributionData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={50}
-                        outerRadius={70}
-                        dataKey="value"
-                        paddingAngle={4}
+                         data={distributionData}
+                         cx="50%"
+                         cy="50%"
+                         innerRadius={50}
+                         outerRadius={70}
+                         dataKey="value"
+                         paddingAngle={4}
                       >
                         {distributionData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -241,11 +241,11 @@ const SuperAdminDashboard = () => {
 
                 <div className="flex gap-6 mt-4 text-sm font-semibold">
                   <div className="flex items-center space-x-2">
-                    <span className="w-3.5 h-3.5 rounded-full bg-blue-500" />
+                    <span className="w-3.5 h-3.5 rounded-full bg-[#008ecc]" />
                     <span className="text-slate-600">Active ({activeCount})</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="w-3.5 h-3.5 rounded-full bg-green-500" />
+                    <span className="w-3.5 h-3.5 rounded-full bg-[#10B981]" />
                     <span className="text-slate-600">Inactive ({inactiveCount})</span>
                   </div>
                 </div>
