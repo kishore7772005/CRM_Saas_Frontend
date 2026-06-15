@@ -24,7 +24,7 @@ import {
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Receipt, CheckCircle, Clock, FileText, Trash2 } from "lucide-react";
+import { Receipt, CheckCircle, Clock, FileText, Trash2, Mail, Send } from "lucide-react";
 
 const CustomCalendarInput = React.forwardRef(({ value, onClick, placeholder }, ref) => (
   <div
@@ -86,6 +86,12 @@ const InvoiceHead = () => {
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [emailMessage, setEmailMessage] = useState("Sending invoice email...");
   const [emailStatus, setEmailStatus] = useState("loading");
+
+  // custom email composer states
+  const [composerOpen, setComposerOpen] = useState(false);
+  const [composerFrom, setComposerFrom] = useState("");
+  const [composerTo, setComposerTo] = useState("");
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
 
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
   const [downloadMessage, setDownloadMessage] = useState("Downloading invoice...");
@@ -158,14 +164,50 @@ const InvoiceHead = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
 /* ── Handle Send Email Function ─────────────────────── */
-  const handleSendEmail = async (invoiceId) => {
+  const openComposer = async (invoice) => {
+    setSelectedInvoice(invoice);
+    setOpenIndex(null);
+    
+    // Default To email (deal's email or default settings fallback)
+    const clientEmail = invoice.items?.[0]?.deal?.email || "";
+    
+    // Fetch Settings to retrieve defaults (include token for tenant resolution)
+    try {
+      const token = localStorage.getItem("token");
+      const { data } = await axios.get(`${API_URL}/settings`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setComposerFrom(data.tenantEmail || data.defaultFromEmail || "");
+      setComposerTo(clientEmail || data.defaultToEmail || "");
+    } catch (error) {
+      console.error("Error fetching settings for email composer:", error);
+      setComposerFrom("");
+      setComposerTo(clientEmail);
+    }
+
+    setComposerOpen(true);
+  };
+
+  const handleComposerSubmit = () => {
+    if (!composerFrom.trim() || !composerTo.trim()) {
+      toast.error("Both From and To email addresses are required.");
+      return;
+    }
+    setComposerOpen(false);
+    handleSendEmail(selectedInvoice._id, composerFrom.trim(), composerTo.trim());
+  };
+
+  const handleSendEmail = async (invoiceId, fromEmail, toEmail) => {
     try {
       setSendingEmailId(invoiceId);
       setEmailModalOpen(true);
       setEmailStatus("loading");
       setEmailMessage("📨 Sending invoice email...");
 
-      await axios.post(`${API_URL}/invoices/sendEmail/${invoiceId}`);
+      await axios.post(`${API_URL}/invoices/sendEmail/${invoiceId}`, {
+        fromEmail,
+        toEmail
+      });
 
       const invoice = invoices.find((inv) => inv._id === invoiceId);
       const dealId = invoice?.items?.[0]?.deal?._id;
@@ -756,7 +798,7 @@ const InvoiceHead = () => {
                       >
                         <button
                           className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                          onClick={() => handleSendEmail(invoice._id)}
+                          onClick={() => openComposer(invoice)}
                         >
                           Send to Email
                         </button>
@@ -851,6 +893,59 @@ const InvoiceHead = () => {
           </div>
         </div>
       )}
+
+      {/* Email Composer Dialog */}
+      <Dialog open={composerOpen} onOpenChange={setComposerOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5 text-blue-600" />
+              Send Invoice Email
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <p className="text-sm text-gray-500">
+              Sending invoice <span className="font-semibold text-gray-800">#{selectedInvoice?.invoicenumber}</span> via email.
+            </p>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">From Email</label>
+              <input
+                type="email"
+                value={composerFrom}
+                onChange={(e) => setComposerFrom(e.target.value)}
+                placeholder="sender@example.com"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              />
+              <p className="text-xs text-gray-400 mt-1">Note: SMTP provider may override this with the authenticated account.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">To Email</label>
+              <input
+                type="email"
+                value={composerTo}
+                onChange={(e) => setComposerTo(e.target.value)}
+                placeholder="client@example.com"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end space-x-3 pt-2">
+            <button
+              onClick={() => setComposerOpen(false)}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleComposerSubmit}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <Send className="h-4 w-4" />
+              Send Invoice
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Email Sending Modal */}
       <Dialog open={emailModalOpen} onOpenChange={setEmailModalOpen}>

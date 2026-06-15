@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { UploadCloud, Save, Image, Globe, Bookmark } from "react-feather";
+import { UploadCloud, Save, Image, Globe, Bookmark, Mail, Send } from "react-feather";
 
 export default function Settings() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -13,6 +13,14 @@ export default function Settings() {
   const [companyName, setCompanyName] = useState("");
   const [favicon, setFavicon] = useState(null);
   const [selectedFavicon, setSelectedFavicon] = useState(null);
+
+  // New Invoice Settings states
+  const [invoiceLogo, setInvoiceLogo] = useState(null);
+  const [selectedInvoiceLogo, setSelectedInvoiceLogo] = useState(null);
+  const [defaultFromEmail, setDefaultFromEmail] = useState("");
+  const [defaultToEmail, setDefaultToEmail] = useState("");
+  const [tenantEmail, setTenantEmail] = useState("");
+  const [tenantName, setTenantName] = useState("");
 
   // Fetch current settings
   useEffect(() => {
@@ -29,8 +37,9 @@ export default function Settings() {
         setCompanyName(data.companyName);
       }
 
+      const baseUrl = API_URL.replace("/api", "");
+
       if (data?.logo) {
-        const baseUrl = API_URL.replace("/api", "");
         const imageUrl = `${baseUrl}/${data.logo.replace(/\\/g, "/")}`;
         console.log("Final Logo URL:", imageUrl);
         setLogo(imageUrl);
@@ -38,12 +47,22 @@ export default function Settings() {
         setLogo(null);
       }
       if (data?.favicon) {
-        const baseUrl = API_URL.replace("/api", "");
         const faviconUrl = `${baseUrl}/${data.favicon.replace(/\\/g, "/")}`;
         setFavicon(faviconUrl);
       } else {
         setFavicon(null);
       }
+      if (data?.invoiceLogo) {
+        const invoiceLogoUrl = `${baseUrl}/${data.invoiceLogo.replace(/\\/g, "/")}`;
+        setInvoiceLogo(invoiceLogoUrl);
+      } else {
+        setInvoiceLogo(null);
+      }
+
+      setDefaultFromEmail(data?.defaultFromEmail || "");
+      setDefaultToEmail(data?.defaultToEmail || "");
+      setTenantEmail(data?.tenantEmail || "");
+      setTenantName(data?.tenantName || "");
     } catch (err) {
       console.error(err);
       toast.error("Failed to load settings");
@@ -154,6 +173,66 @@ export default function Settings() {
       toast.error(err.response?.data?.message || "Upload failed");
     } finally {
       setLoading(false);
+    }
+  };
+
+  /* ── Handle Invoice Logo Change Function ─────────────────────── */
+  const handleInvoiceLogoChange = (e) => {
+    setSelectedInvoiceLogo(e.target.files[0]);
+  };
+
+  /* ── Handle Invoice Logo Upload Function ─────────────────────── */
+  const handleInvoiceLogoUpload = async () => {
+    if (!selectedInvoiceLogo) {
+      toast.error("Please select an invoice logo image");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+
+      const formData = new FormData();
+      formData.append("logo", selectedInvoiceLogo);
+
+      await axios.post(`${API_URL}/settings/invoice-logo`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      toast.success("Invoice logo updated successfully!");
+      setSelectedInvoiceLogo(null);
+      fetchSettings();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Invoice logo upload failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ── Handle Email Settings Update Function ─────────────────────── */
+  const handleInvoiceEmailSettingsUpdate = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.put(
+        `${API_URL}/settings/invoice-email-settings`,
+        { defaultFromEmail, defaultToEmail },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success("Invoice email settings updated successfully!");
+      fetchSettings();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Update failed");
     }
   };
 
@@ -373,6 +452,144 @@ export default function Settings() {
             >
               <Save size={16} className="sm:w-4 sm:h-4" />
               Update Company Name
+            </button>
+          </div>
+
+          {/* ================= INVOICE LOGO CARD ================= */}
+          <div className="group bg-white rounded-xl sm:rounded-2xl border border-gray-200 p-4 sm:p-6 flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-blue-200">
+            
+            <div className="space-y-4 sm:space-y-5 flex-1">
+              {/* Header with icon */}
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="p-1.5 bg-indigo-50 rounded-lg">
+                      <Image className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
+                    </div>
+                    <h2 className="text-base sm:text-lg font-semibold text-gray-800">
+                      Invoice Template Logo
+                    </h2>
+                  </div>
+                  <p className="text-xs sm:text-sm text-gray-500">
+                    Specifically used on PDF invoices and invoice emails
+                  </p>
+                </div>
+                {invoiceLogo && (
+                  <span className="px-2 py-1 bg-green-50 text-green-600 text-xs rounded-full border border-green-200">
+                    Active
+                  </span>
+                )}
+              </div>
+
+              {/* Invoice Logo Preview */}
+              <div className="flex justify-center">
+                {invoiceLogo ? (
+                  <div className="relative group">
+                    <img
+                      src={invoiceLogo}
+                      alt="Invoice Logo"
+                      className="h-20 sm:h-24 w-auto max-w-[200px] object-contain border-2 border-gray-100 rounded-xl p-3 bg-gray-50 group-hover:border-indigo-200 transition-all"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 rounded-xl transition-all"></div>
+                  </div>
+                ) : (
+                  <div className="h-20 sm:h-24 w-full max-w-[200px] flex items-center justify-center border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 text-gray-400 text-sm">
+                    <span className="text-xs sm:text-sm">Using main logo fallback</span>
+                  </div>
+                )}
+              </div>
+
+              {/* File Input */}
+              <div className="space-y-2">
+                <label className="text-xs sm:text-sm font-medium text-gray-700">
+                  Upload invoice logo
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleInvoiceLogoChange}
+                  className="w-full text-xs sm:text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-gray-200 rounded-lg p-1"
+                />
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <button
+              onClick={handleInvoiceLogoUpload}
+              disabled={loading}
+              className="mt-4 sm:mt-6 w-full flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg text-xs sm:text-sm font-medium hover:from-indigo-700 hover:to-indigo-800 transition disabled:opacity-60 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+            >
+              <UploadCloud size={16} className="sm:w-4 sm:h-4" />
+              {loading ? "Uploading..." : "Update Invoice Logo"}
+            </button>
+          </div>
+
+          {/* ================= INVOICE EMAIL SETTINGS CARD ================= */}
+          <div className="group bg-white rounded-xl sm:rounded-2xl border border-gray-200 p-4 sm:p-6 flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-blue-200 md:col-span-2 lg:col-span-1">
+            
+            <div className="space-y-4 sm:space-y-5 flex-1">
+              {/* Header with icon */}
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="p-1.5 bg-orange-50 rounded-lg">
+                      <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
+                    </div>
+                    <h2 className="text-base sm:text-lg font-semibold text-gray-800">
+                      Invoice Email Configuration
+                    </h2>
+                  </div>
+                  <p className="text-xs sm:text-sm text-gray-500">
+                    Default sender and receiver addresses
+                  </p>
+                </div>
+              </div>
+
+              {/* Email Inputs */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs sm:text-sm font-medium text-gray-700">
+                    Default From Email
+                  </label>
+                  <input
+                    type="email"
+                    value={defaultFromEmail}
+                    onChange={(e) => setDefaultFromEmail(e.target.value)}
+                    className="w-full border border-gray-300 p-2.5 sm:p-3 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                    placeholder="e.g., billing@company.com"
+                  />
+                  {tenantEmail && (
+                    <p className="text-xs text-gray-400">
+                      Tenant Email: <span className="font-semibold text-gray-500">{tenantEmail}</span>
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs sm:text-sm font-medium text-gray-700">
+                    Default To Email (Fallback)
+                  </label>
+                  <input
+                    type="email"
+                    value={defaultToEmail}
+                    onChange={(e) => setDefaultToEmail(e.target.value)}
+                    className="w-full border border-gray-300 p-2.5 sm:p-3 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                    placeholder="e.g., invoices@company.com"
+                  />
+                  <p className="text-[11px] text-gray-400">
+                    If deal has no email, this address is pre-filled as fallback.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <button
+              onClick={handleInvoiceEmailSettingsUpdate}
+              className="mt-4 sm:mt-6 w-full flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2.5 bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-lg text-xs sm:text-sm font-medium hover:from-orange-700 hover:to-orange-800 transition shadow-md hover:shadow-lg"
+            >
+              <Save size={16} className="sm:w-4 sm:h-4" />
+              Save Email Settings
             </button>
           </div>
         </div>
