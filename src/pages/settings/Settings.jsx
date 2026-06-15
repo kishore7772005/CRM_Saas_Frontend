@@ -471,7 +471,7 @@ export default function Settings() {
                     </h2>
                   </div>
                   <p className="text-xs sm:text-sm text-gray-500">
-                    Specifically used on PDF invoices and invoice emails
+                    Used on PDF invoices, proposals, and email campaigns
                   </p>
                 </div>
                 {invoiceLogo && (
