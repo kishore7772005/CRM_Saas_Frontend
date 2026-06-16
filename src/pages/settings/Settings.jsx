@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { UploadCloud, Save, Image, Globe, Bookmark, Mail, Send } from "react-feather";
+import { UploadCloud, Save, Image, Globe, Bookmark, Send } from "react-feather";
 
 export default function Settings() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -17,9 +17,6 @@ export default function Settings() {
   // New Invoice Settings states
   const [invoiceLogo, setInvoiceLogo] = useState(null);
   const [selectedInvoiceLogo, setSelectedInvoiceLogo] = useState(null);
-  const [defaultFromEmail, setDefaultFromEmail] = useState("");
-  const [defaultToEmail, setDefaultToEmail] = useState("");
-  const [tenantEmail, setTenantEmail] = useState("");
   const [tenantName, setTenantName] = useState("");
 
   // Fetch current settings
@@ -59,9 +56,6 @@ export default function Settings() {
         setInvoiceLogo(null);
       }
 
-      setDefaultFromEmail(data?.defaultFromEmail || "");
-      setDefaultToEmail(data?.defaultToEmail || "");
-      setTenantEmail(data?.tenantEmail || "");
       setTenantName(data?.tenantName || "");
     } catch (err) {
       console.error(err);
@@ -210,29 +204,6 @@ export default function Settings() {
       toast.error(err.response?.data?.message || "Invoice logo upload failed");
     } finally {
       setLoading(false);
-    }
-  };
-
-  /* ── Handle Email Settings Update Function ─────────────────────── */
-  const handleInvoiceEmailSettingsUpdate = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      await axios.put(
-        `${API_URL}/settings/invoice-email-settings`,
-        { defaultFromEmail, defaultToEmail },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      toast.success("Invoice email settings updated successfully!");
-      fetchSettings();
-    } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || "Update failed");
     }
   };
 
@@ -467,7 +438,7 @@ export default function Settings() {
                       <Image className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
                     </div>
                     <h2 className="text-base sm:text-lg font-semibold text-gray-800">
-                      Invoice Template Logo
+                      Message Template Logo
                     </h2>
                   </div>
                   <p className="text-xs sm:text-sm text-gray-500">
@@ -524,74 +495,6 @@ export default function Settings() {
             </button>
           </div>
 
-          {/* ================= INVOICE EMAIL SETTINGS CARD ================= */}
-          <div className="group bg-white rounded-xl sm:rounded-2xl border border-gray-200 p-4 sm:p-6 flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-blue-200 md:col-span-2 lg:col-span-1">
-            
-            <div className="space-y-4 sm:space-y-5 flex-1">
-              {/* Header with icon */}
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="p-1.5 bg-orange-50 rounded-lg">
-                      <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
-                    </div>
-                    <h2 className="text-base sm:text-lg font-semibold text-gray-800">
-                      Invoice Email Configuration
-                    </h2>
-                  </div>
-                  <p className="text-xs sm:text-sm text-gray-500">
-                    Default sender and receiver addresses
-                  </p>
-                </div>
-              </div>
-
-              {/* Email Inputs */}
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-xs sm:text-sm font-medium text-gray-700">
-                    Default From Email
-                  </label>
-                  <input
-                    type="email"
-                    value={defaultFromEmail}
-                    onChange={(e) => setDefaultFromEmail(e.target.value)}
-                    className="w-full border border-gray-300 p-2.5 sm:p-3 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                    placeholder="e.g., billing@company.com"
-                  />
-                  {tenantEmail && (
-                    <p className="text-xs text-gray-400">
-                      Tenant Email: <span className="font-semibold text-gray-500">{tenantEmail}</span>
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs sm:text-sm font-medium text-gray-700">
-                    Default To Email (Fallback)
-                  </label>
-                  <input
-                    type="email"
-                    value={defaultToEmail}
-                    onChange={(e) => setDefaultToEmail(e.target.value)}
-                    className="w-full border border-gray-300 p-2.5 sm:p-3 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                    placeholder="e.g., invoices@company.com"
-                  />
-                  <p className="text-[11px] text-gray-400">
-                    If deal has no email, this address is pre-filled as fallback.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Action Button */}
-            <button
-              onClick={handleInvoiceEmailSettingsUpdate}
-              className="mt-4 sm:mt-6 w-full flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2.5 bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-lg text-xs sm:text-sm font-medium hover:from-orange-700 hover:to-orange-800 transition shadow-md hover:shadow-lg"
-            >
-              <Save size={16} className="sm:w-4 sm:h-4" />
-              Save Email Settings
-            </button>
-          </div>
         </div>
 
         {/* Bottom spacing */}
