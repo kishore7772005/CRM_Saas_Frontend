@@ -63,6 +63,8 @@ import AllStreakLeaderboard from "./pages/streak/AllStreakLeaderboard";
 
 import WebsiteContactForm from "./pages/website/WebsiteContactForm";
 import ResetPassword from "./pages/password/ResetPassword";
+import Integrations from "./pages/integrations/Integrations";
+import FacebookCallback from "./pages/integrations/FacebookCallback";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -102,6 +104,7 @@ function App() {
               <Route path="/:tenantSlug/plans" element={<ViewPlans />} />
               <Route path="/contact" element={<WebsiteContactForm />} />
               <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route path="/integrations/facebook/callback" element={<FacebookCallback />} />
 
               {/* SUPERADMIN PORTAL */}
               <Route path="/superadmin/login" element={<Navigate to="/" replace />} />
@@ -205,6 +208,10 @@ function App() {
                   <Route element={<PrivateRoute permission="settings" />}>
                     <Route path="settings" element={<Settings />} />
                   </Route>
+
+                  {/* INTEGRATIONS */}
+                  <Route path="integrations" element={<Integrations />} />
+                  <Route path="integrations/facebook/callback" element={<FacebookCallback />} />
                 </Route>
               </Route>
 

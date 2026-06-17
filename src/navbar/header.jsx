@@ -5,7 +5,7 @@ import { useNotifications } from "../context/NotificationContext";
 import { disconnectSocket } from "../utils/socket";
 import { ShieldCheck, Maximize, Minimize } from "lucide-react";
 
-import { Settings } from "lucide-react";
+import { Settings, Plug } from "lucide-react";
 
 import PasswordUpdate from "../pages/password/PasswordUpdate";
 import { formatDistanceToNow } from "date-fns";
@@ -309,13 +309,30 @@ const handleLogout = async () => {
           {isAdmin && (
             <div className="relative group">
               <button
+                onClick={() => navigate("integrations")}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <Plug size={22} className="text-gray-600 dark:text-gray-300" />
+              </button>
+              <div
+                className="absolute top-full mt-2 left-1/2 -translate-x-1/2
+                opacity-0 group-hover:opacity-100 transition-opacity
+                bg-gray-900 text-white text-xs px-3 py-1 rounded-md whitespace-nowrap
+                pointer-events-none z-50"
+              >
+                Integrations
+              </div>
+            </div>
+          )}
+
+          {isAdmin && (
+            <div className="relative group">
+              <button
                 onClick={() => navigate("/settings")}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 <Settings size={22} className="text-gray-600 dark:text-gray-300" />
               </button>
-
-              {/* Tooltip */}
               <div
                 className="absolute top-full mt-2 left-1/2 -translate-x-1/2
                 opacity-0 group-hover:opacity-100 transition-opacity
