@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Link2, Trash2, RefreshCw, CheckCircle, AlertCircle } from "react-feather";
 import { api } from "../../services/api";
+import LinkedInIntegrationCard from "../../components/integrations/LinkedInIntegrationCard.jsx";
 
 export default function Integrations() {
   const [integrations, setIntegrations] = useState([]);
@@ -220,6 +221,9 @@ export default function Integrations() {
           </p>
         </div>
       </div>
+
+      {/* LinkedIn Campaigns Card */}
+      <LinkedInIntegrationCard />
 
       {/* How it works */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">

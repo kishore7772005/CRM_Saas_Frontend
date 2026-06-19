@@ -65,6 +65,7 @@ import WebsiteContactForm from "./pages/website/WebsiteContactForm";
 import ResetPassword from "./pages/password/ResetPassword";
 import Integrations from "./pages/integrations/Integrations";
 import FacebookCallback from "./pages/integrations/FacebookCallback";
+import LinkedInCallback from "./pages/integrations/LinkedInCallback";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -105,6 +106,7 @@ function App() {
               <Route path="/contact" element={<WebsiteContactForm />} />
               <Route path="/reset-password/:token" element={<ResetPassword />} />
               <Route path="/integrations/facebook/callback" element={<FacebookCallback />} />
+              <Route path="/integrations/linkedin/callback" element={<LinkedInCallback />} />
 
               {/* SUPERADMIN PORTAL */}
               <Route path="/superadmin/login" element={<Navigate to="/" replace />} />
@@ -212,6 +214,7 @@ function App() {
                   {/* INTEGRATIONS */}
                   <Route path="integrations" element={<Integrations />} />
                   <Route path="integrations/facebook/callback" element={<FacebookCallback />} />
+                  <Route path="integrations/linkedin/callback" element={<LinkedInCallback />} />
                 </Route>
               </Route>
 
