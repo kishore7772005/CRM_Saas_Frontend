@@ -70,7 +70,7 @@ const SuperAdminProfile = () => {
         <div className="md:col-span-1 space-y-6">
           <Card className="border-0 shadow-md bg-white">
             <CardContent className="p-6 flex flex-col items-center text-center">
-              <div className="w-24 h-24 rounded-full bg-slate-800 text-white flex items-center justify-center font-black text-3xl shadow-lg border-2 border-slate-600 mb-4">
+              <div className="w-24 h-24 rounded-full bg-[#f2fbff] text-[#008ecc] flex items-center justify-center font-black text-3xl shadow-lg border-2 border-[#008ecc]/20 mb-4">
                 SA
               </div>
               <h3 className="font-extrabold text-slate-800 text-lg">{name}</h3>
@@ -100,7 +100,7 @@ const SuperAdminProfile = () => {
           <Card className="border-0 shadow-md bg-white">
             <CardHeader>
               <CardTitle className="text-lg font-bold flex items-center space-x-2 text-slate-800">
-                <User size={18} className="text-blue-500" />
+                <User size={18} className="text-[#008ecc]" />
                 <span>Account Information</span>
               </CardTitle>
               <CardDescription>Update global administrative profile credentials.</CardDescription>
@@ -116,7 +116,7 @@ const SuperAdminProfile = () => {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
+                    className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc]"
                   />
                 </div>
                 <div>
@@ -128,14 +128,14 @@ const SuperAdminProfile = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
+                    className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc]"
                   />
                 </div>
                 <div className="flex justify-end pt-2">
                   <button
                     type="submit"
                     disabled={profileSaving}
-                    className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold cursor-pointer text-sm shadow disabled:opacity-50"
+                    className="px-5 py-2.5 bg-[#008ecc] hover:bg-[#007bb0] text-white rounded-xl font-bold cursor-pointer text-sm shadow disabled:opacity-50"
                   >
                     {profileSaving ? "Saving..." : "Save Details"}
                   </button>
@@ -148,7 +148,7 @@ const SuperAdminProfile = () => {
           <Card className="border-0 shadow-md bg-white">
             <CardHeader>
               <CardTitle className="text-lg font-bold flex items-center space-x-2 text-slate-800">
-                <KeyRound size={18} className="text-purple-500" />
+                <KeyRound size={18} className="text-[#008ecc]" />
                 <span>Change Administrator Password</span>
               </CardTitle>
               <CardDescription>Modify account passwords for secure access.</CardDescription>
@@ -165,7 +165,7 @@ const SuperAdminProfile = () => {
                     placeholder="••••••••"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
+                    className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc]"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -179,7 +179,7 @@ const SuperAdminProfile = () => {
                       placeholder="••••••••"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
+                      className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc]"
                     />
                   </div>
                   <div>
@@ -192,7 +192,7 @@ const SuperAdminProfile = () => {
                       placeholder="••••••••"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
+                      className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc]"
                     />
                   </div>
                 </div>
@@ -200,7 +200,7 @@ const SuperAdminProfile = () => {
                   <button
                     type="submit"
                     disabled={pwSaving}
-                    className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold cursor-pointer text-sm shadow disabled:opacity-50"
+                    className="px-5 py-2.5 bg-[#008ecc] hover:bg-[#007bb0] text-white rounded-xl font-bold cursor-pointer text-sm shadow disabled:opacity-50"
                   >
                     {pwSaving ? "Updating Security..." : "Reset Password"}
                   </button>

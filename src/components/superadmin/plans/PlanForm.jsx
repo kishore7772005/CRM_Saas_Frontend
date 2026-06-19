@@ -95,7 +95,7 @@ export const PlanForm = ({
         
         {/* SECTION 1 — Plan Identity */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 bg-slate-900 text-white flex items-center space-x-2">
+          <div className="px-6 py-4 bg-[#008ecc] text-white flex items-center space-x-2">
             <h3 className="text-md font-bold tracking-tight">SECTION 1 — Plan Identity</h3>
           </div>
           <div className="p-6 space-y-6">
@@ -112,7 +112,7 @@ export const PlanForm = ({
                     minLength: { value: 2, message: "Plan name must be at least 2 characters" },
                     maxLength: { value: 100, message: "Plan name cannot exceed 100 characters" },
                   })}
-                  className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all shadow-inner ${
+                  className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all shadow-inner ${
                     errors.plan_name ? "border-red-300 focus:ring-red-500" : "border-slate-300"
                   }`}
                 />
@@ -147,7 +147,7 @@ export const PlanForm = ({
                       message: "Only lowercase letters, numbers and underscores allowed",
                     },
                   })}
-                  className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all font-mono shadow-inner ${
+                  className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all font-mono shadow-inner ${
                     isCodeDisabled ? "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed" : ""
                   } ${errors.plan_code ? "border-red-300 focus:ring-red-500" : "border-slate-300"}`}
                 />
@@ -167,7 +167,7 @@ export const PlanForm = ({
                 </label>
                 <select
                   {...register("plan_type", { required: "Plan type is required" })}
-                  className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all bg-white"
+                  className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all bg-white"
                 >
                   <option value="free">Free</option>
                   <option value="paid">Paid</option>
@@ -184,7 +184,7 @@ export const PlanForm = ({
                 </label>
                 <select
                   {...register("status")}
-                  className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all bg-white"
+                  className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all bg-white"
                 >
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
@@ -201,7 +201,7 @@ export const PlanForm = ({
                 placeholder="Short description for tenants..."
                 rows={3}
                 {...register("description")}
-                className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all shadow-inner"
+                className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all shadow-inner"
               />
             </div>
           </div>
@@ -209,7 +209,7 @@ export const PlanForm = ({
 
         {/* SECTION 2 — Pricing & Billing */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 bg-slate-900 text-white flex items-center space-x-2">
+          <div className="px-6 py-4 bg-[#008ecc] text-white flex items-center space-x-2">
             <h3 className="text-md font-bold tracking-tight">SECTION 2 — Pricing & Billing</h3>
           </div>
           <div className="p-6 space-y-6">
@@ -228,7 +228,7 @@ export const PlanForm = ({
                       min: { value: 0, message: "Price must be greater than or equal to 0" },
                       valueAsNumber: true,
                     })}
-                    className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all shadow-inner ${
+                    className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all shadow-inner ${
                       errors.price_monthly ? "border-red-300 focus:ring-red-500" : "border-slate-300"
                     }`}
                   />
@@ -249,7 +249,7 @@ export const PlanForm = ({
                       min: { value: 0, message: "Price must be greater than or equal to 0" },
                       valueAsNumber: true,
                     })}
-                    className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all shadow-inner ${
+                    className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all shadow-inner ${
                       errors.price_yearly ? "border-red-300 focus:ring-red-500" : "border-slate-300"
                     }`}
                   />
@@ -276,7 +276,7 @@ export const PlanForm = ({
                 </label>
                 <select
                   {...register("currency")}
-                  className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all bg-white"
+                  className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all bg-white"
                 >
                   <option value="USD">USD ($)</option>
                   <option value="INR">INR (₹)</option>
@@ -291,7 +291,7 @@ export const PlanForm = ({
                 </label>
                 <select
                   {...register("billing_cycle", { required: "Billing cycle is required" })}
-                  className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all bg-white"
+                  className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all bg-white"
                 >
                   <option value="monthly">Monthly</option>
                   <option value="yearly">Yearly</option>
@@ -313,7 +313,7 @@ export const PlanForm = ({
                     min: { value: 0, message: "Validity period must be >= 0" },
                     valueAsNumber: true,
                   })}
-                  className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all shadow-inner ${
+                  className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all shadow-inner ${
                     errors.trial_days ? "border-red-300 focus:ring-red-500" : "border-slate-300"
                   }`}
                 />
@@ -338,7 +338,7 @@ export const PlanForm = ({
           <button
             type="submit"
             disabled={submitting}
-            className="flex-1 py-3.5 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-850 disabled:opacity-50 transition-all cursor-pointer text-sm shadow-md flex items-center justify-center space-x-2"
+            className="flex-1 py-3.5 bg-[#008ecc] text-white rounded-xl font-semibold hover:bg-[#007bb0] disabled:opacity-50 transition-all cursor-pointer text-sm shadow-md flex items-center justify-center space-x-2"
           >
             {submitting ? (
               <>
@@ -358,7 +358,7 @@ export const PlanForm = ({
         
         {/* SECTION 3 — Tenant User Limits */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 bg-slate-900 text-white flex items-center space-x-2">
+          <div className="px-6 py-4 bg-[#008ecc] text-white flex items-center space-x-2">
             <h3 className="text-md font-bold tracking-tight">SECTION 3 — Limits</h3>
           </div>
           <div className="p-6 space-y-6">
@@ -374,7 +374,7 @@ export const PlanForm = ({
                   min: { value: 0, message: "Value must be greater than or equal to 0" },
                   valueAsNumber: true,
                 })}
-                className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all shadow-inner ${
+                className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all shadow-inner ${
                   planType === "enterprise" ? "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed" : ""
                 } ${errors.max_users_per_tenant ? "border-red-300 focus:ring-red-500" : "border-slate-300"}`}
               />
@@ -392,7 +392,7 @@ export const PlanForm = ({
 
         {/* SECTION 4 — Visibility & Settings */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 bg-slate-900 text-white flex items-center space-x-2">
+          <div className="px-6 py-4 bg-[#008ecc] text-white flex items-center space-x-2">
             <h3 className="text-md font-bold tracking-tight">SECTION 4 — Settings</h3>
           </div>
           <div className="p-6 space-y-6">
@@ -402,7 +402,7 @@ export const PlanForm = ({
                   type="checkbox"
                   id="visible_on_pricing"
                   {...register("visible_on_pricing")}
-                  className="w-4 h-4 text-slate-800 border-slate-300 rounded focus:ring-slate-800 mt-1 cursor-pointer"
+                  className="w-4 h-4 text-[#008ecc] border-slate-300 rounded focus:ring-[#008ecc] mt-1 cursor-pointer"
                 />
                 <div>
                   <label htmlFor="visible_on_pricing" className="text-xs font-bold text-slate-800 block cursor-pointer uppercase tracking-wider">
@@ -417,7 +417,7 @@ export const PlanForm = ({
                   type="checkbox"
                   id="is_recommended"
                   {...register("is_recommended")}
-                  className="w-4 h-4 text-slate-800 border-slate-300 rounded focus:ring-slate-800 mt-1 cursor-pointer"
+                  className="w-4 h-4 text-[#008ecc] border-slate-300 rounded focus:ring-[#008ecc] mt-1 cursor-pointer"
                 />
                 <div>
                   <label htmlFor="is_recommended" className="text-xs font-bold text-slate-800 block cursor-pointer uppercase tracking-wider">
@@ -446,7 +446,7 @@ export const PlanForm = ({
                   min: { value: 1, message: "Sort order must be >= 1" },
                   valueAsNumber: true,
                 })}
-                className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all shadow-inner ${
+                className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] transition-all shadow-inner ${
                   errors.sort_order ? "border-red-300 focus:ring-red-500" : "border-slate-300"
                 }`}
               />

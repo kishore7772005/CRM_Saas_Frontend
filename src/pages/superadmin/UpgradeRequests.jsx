@@ -133,7 +133,7 @@ const UpgradeRequests = () => {
                         <button
                           onClick={() => handleApproveUpgrade(req._id)}
                           disabled={processingId === req._id}
-                          className="px-4 py-1.5 bg-[#008ecc] text-white rounded-lg font-bold text-xs hover:bg-blue-700 disabled:opacity-50 transition cursor-pointer shadow-sm"
+                          className="px-4 py-1.5 bg-[#008ecc] text-white rounded-lg font-bold text-xs hover:bg-[#007bb0] disabled:opacity-50 transition cursor-pointer shadow-sm"
                         >
                           {processingId === req._id ? "Approving..." : "Approve Upgrade"}
                         </button>

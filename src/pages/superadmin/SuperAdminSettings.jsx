@@ -40,7 +40,7 @@ const SuperAdminSettings = () => {
         <Card className="border-0 shadow-md bg-white">
           <CardHeader>
             <CardTitle className="text-lg font-bold flex items-center space-x-2">
-              <Globe size={18} className="text-blue-500" />
+              <Globe size={18} className="text-[#008ecc]" />
               <span>General Configurations</span>
             </CardTitle>
             <CardDescription>Customize platform name and user support details.</CardDescription>
@@ -55,7 +55,7 @@ const SuperAdminSettings = () => {
                   type="text"
                   value={platformName}
                   onChange={(e) => setPlatformName(e.target.value)}
-                  className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
+                  className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc]"
                 />
               </div>
               <div>
@@ -66,7 +66,7 @@ const SuperAdminSettings = () => {
                   type="email"
                   value={supportEmail}
                   onChange={(e) => setSupportEmail(e.target.value)}
-                  className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800"
+                  className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc]"
                 />
               </div>
             </div>
@@ -77,7 +77,7 @@ const SuperAdminSettings = () => {
         <Card className="border-0 shadow-md bg-white">
           <CardHeader>
             <CardTitle className="text-lg font-bold flex items-center space-x-2">
-              <Sliders size={18} className="text-purple-500" />
+              <Sliders size={18} className="text-[#008ecc]" />
               <span>Registration & Tenant Provisioning</span>
             </CardTitle>
             <CardDescription>Control how new business instances register onto the platform.</CardDescription>
@@ -93,7 +93,7 @@ const SuperAdminSettings = () => {
                 type="button"
                 onClick={() => setAllowSignups(!allowSignups)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus:outline-none ${
-                  allowSignups ? "bg-slate-800" : "bg-slate-200"
+                  allowSignups ? "bg-[#008ecc]" : "bg-slate-200"
                 }`}
               >
                 <span
@@ -131,7 +131,7 @@ const SuperAdminSettings = () => {
         <Card className="border-0 shadow-md bg-white">
           <CardHeader>
             <CardTitle className="text-lg font-bold flex items-center space-x-2">
-              <Shield size={18} className="text-amber-500" />
+              <Shield size={18} className="text-[#008ecc]" />
               <span>Platform Security & Session</span>
             </CardTitle>
             <CardDescription>Configure security protocols and JWT session expiry times.</CardDescription>
@@ -150,7 +150,7 @@ const SuperAdminSettings = () => {
                 max={168}
                 value={sessionTimeout}
                 onChange={(e) => setSessionTimeout(Number(e.target.value))}
-                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-800"
+                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#008ecc]"
               />
               <p className="text-[11px] text-slate-400 mt-1">
                 Maximum token lifetime. Once reached, users will be logged out automatically.
@@ -176,7 +176,7 @@ const SuperAdminSettings = () => {
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center space-x-2 px-6 py-3 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-700 transition-all shadow-md cursor-pointer disabled:opacity-50"
+            className="flex items-center space-x-2 px-6 py-3 bg-[#008ecc] text-white rounded-xl font-semibold hover:bg-[#007bb0] transition-all shadow-md cursor-pointer disabled:opacity-50"
           >
             <Save size={18} />
             <span>{saving ? "Saving Changes..." : "Save Configurations"}</span>

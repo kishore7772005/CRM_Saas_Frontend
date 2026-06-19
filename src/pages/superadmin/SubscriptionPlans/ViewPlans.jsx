@@ -177,7 +177,7 @@ const ViewPlans = () => {
                     onClick={() => navigate(`/${tenantSlug}/upgrade?planId=${p._id}`)}
                     className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md text-center block ${
                       isRec
-                        ? "bg-[#008ecc] text-white hover:bg-blue-700"
+                        ? "bg-[#008ecc] text-white hover:bg-[#007bb0]"
                         : "bg-slate-50 border border-slate-200 hover:border-slate-350 text-slate-700 hover:bg-slate-100"
                     }`}
                   >
