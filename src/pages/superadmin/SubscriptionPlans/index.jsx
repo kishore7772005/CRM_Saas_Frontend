@@ -64,7 +64,7 @@ const SubscriptionPlans = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center space-x-2">
-            <CreditCard className="text-slate-800" size={24} />
+            <CreditCard className="text-[#008ecc]" size={24} />
             <span>Subscription plans</span>
           </h2>
           <p className="text-slate-500 text-sm">Manage SaaS pricing tiers</p>
@@ -80,7 +80,7 @@ const SubscriptionPlans = () => {
           </button>
           <button
             onClick={handleCreateRedirect}
-            className="flex items-center space-x-2 px-4 py-2.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-700 transition-all shadow-md cursor-pointer text-sm"
+            className="flex items-center space-x-2 px-4 py-2.5 bg-[#008ecc] text-white rounded-xl font-semibold hover:bg-[#007bb0] transition-all shadow-md cursor-pointer text-sm"
           >
             <Plus size={18} />
             <span>Create plan</span>
@@ -98,7 +98,7 @@ const SubscriptionPlans = () => {
             placeholder="Search by plan name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-transparent bg-white shadow-inner"
+            className="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] focus:border-transparent bg-white shadow-inner"
           />
         </div>
 
@@ -107,7 +107,7 @@ const SubscriptionPlans = () => {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 bg-white"
+            className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] bg-white"
           >
             <option value="">All Statuses</option>
             <option value="Active">Active</option>
@@ -121,7 +121,7 @@ const SubscriptionPlans = () => {
           <select
             value={planType}
             onChange={(e) => setPlanType(e.target.value)}
-            className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 bg-white"
+            className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#008ecc] bg-white"
           >
             <option value="">All Plan Types</option>
             <option value="Free">Free</option>
@@ -180,7 +180,7 @@ const SubscriptionPlans = () => {
               </div>
               <button
                 onClick={handleCreateRedirect}
-                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-sm transition-all shadow-md"
+                className="px-5 py-2.5 bg-[#008ecc] hover:bg-[#007bb0] text-white font-semibold rounded-xl text-sm transition-all shadow-md"
               >
                 Create First Plan
               </button>

@@ -293,8 +293,7 @@ const UpgradePlan = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition flex items-center justify-center space-x-2 cursor-pointer shadow-md"
-                style={{ backgroundColor: "#008ecc" }}
+                className="w-full bg-[#008ecc] text-white py-3 rounded-xl font-bold hover:bg-[#007bb0] transition flex items-center justify-center space-x-2 cursor-pointer shadow-md"
               >
                 <Send size={14} />
                 <span>{submitting ? "Submitting Proposal..." : "Send Upgrade Proposal"}</span>
@@ -331,7 +330,7 @@ const UpgradePlan = () => {
                 <div>
                   <p className="font-bold">Important Data Reset Warning</p>
                   <p className="mt-1 leading-relaxed">
-                    Plan upgrades trigger a <strong>complete database refresh</strong>. Prior workspace data will be wiped clean. An email with your fresh credentials will be sent.
+                    Plan upgrades trigger a <strong>complete database refresh</strong>. All existing data will be preserved. An email with your fresh credentials will be sent.
                   </p>
                 </div>
               </div>

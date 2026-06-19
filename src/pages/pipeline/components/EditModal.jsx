@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
+
+const BASE_URL = import.meta.env.VITE_SI_URI || "http://localhost:5000";
 import {
   Dialog,
   DialogTrigger,
@@ -89,7 +91,7 @@ const EditModal = ({ open, setOpen, deal }) => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.patch(
-        `http://localhost:8000/api/dealsadded/crdeals/${deal._id}`,
+        `${BASE_URL}/api/dealsadded/crdeals/${deal._id}`,
         {
           ...data,
           stage: stage, // include updated stage

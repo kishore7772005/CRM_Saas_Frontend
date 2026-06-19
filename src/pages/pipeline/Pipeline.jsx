@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
+
+const BASE_URL = import.meta.env.VITE_SI_URI || "http://localhost:5000";
 import { useState } from "react";
 import { Home, Briefcase, ChevronRight, Users, X } from "react-feather";
 import { Checkbox } from "../../components/ui/checkbox";
@@ -150,7 +152,7 @@ const pipeline = () => {
     const isPerson = data.leadType === "Person";
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/dealsAdded/crdeals",
+        `${BASE_URL}/api/dealsAdded/crdeals`,
         {
           title: data.title,
           description: data.description,
@@ -250,7 +252,7 @@ const pipeline = () => {
     // Update backend
     try {
       await axios.patch(
-        `http://localhost:8000/api/dealsadded/crdeals/${draggableId}`,
+        `${BASE_URL}/api/dealsadded/crdeals/${draggableId}`,
         {
           stage: destination.droppableId,
         }
@@ -269,7 +271,7 @@ const pipeline = () => {
     const fetchDeals = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8000/api/dealsadded/crdeals"
+          `${BASE_URL}/api/dealsadded/crdeals`
         );
         console.log("Fetched deals:", res.data);
         setDeals(res.data || []);
@@ -299,7 +301,7 @@ const pipeline = () => {
     if (!confirmDelete) return;
     console.log("_id", _id);
     axios
-      .delete(`http://localhost:8000/api/dealsadded/crdeals/${_id}`)
+      .delete(`${BASE_URL}/api/dealsadded/crdeals/${_id}`)
       .then((res) => {
         console.log("Deleted:", res.data);
       })
@@ -312,7 +314,7 @@ const pipeline = () => {
   const handleEdit = async (_id, stage) => {
     try {
       const res = await axios.patch(
-        `http://localhost:8000/api/dealsadded/crdeals/${_id}`,
+        `${BASE_URL}/api/dealsadded/crdeals/${_id}`,
         {
           stage: stage, //  must be a valid string like "Prospect", "Negotiation"
         }
@@ -335,7 +337,7 @@ const pipeline = () => {
     // Update backend
     try {
       const res = await axios.patch(
-        `http://localhost:8000/api/dealsadded/crdeals/${deal._id}`,
+        `${BASE_URL}/api/dealsadded/crdeals/${deal._id}`,
         {
           stage: "Won",
         }
@@ -356,7 +358,7 @@ const pipeline = () => {
     // Update backend
     try {
       const res = await axios.patch(
-        `http://localhost:8000/api/dealsadded/crdeals/${deal._id}`,
+        `${BASE_URL}/api/dealsadded/crdeals/${deal._id}`,
         {
           stage: "Lost",
         }
@@ -382,7 +384,7 @@ const pipeline = () => {
 
     try {
       const res = await axios.patch(
-        `http://localhost:8000/api/dealsadded/crdeals/${_id}`,
+        `${BASE_URL}/api/dealsadded/crdeals/${_id}`,
         { marked: !isCurrentlyMarked } // send new marked value
       );
       console.log("Marked updated:", res.data);
@@ -394,7 +396,7 @@ const pipeline = () => {
   useEffect(() => {
     const fetchDeals = async () => {
       const res = await axios.get(
-        "http://localhost:8000/api/dealsadded/crdeals"
+        `${BASE_URL}/api/dealsadded/crdeals`
       );
       setDeals(res.data);
 

@@ -90,7 +90,7 @@ const PlanDetail = () => {
           </div>
           <button
             onClick={() => navigate("/superadmin/subscription-plans")}
-            className="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold hover:bg-slate-700 transition-colors shadow"
+            className="px-4 py-2 bg-[#008ecc] text-white rounded-xl text-xs font-semibold hover:bg-[#007bb0] transition-colors shadow"
           >
             Back to Plans
           </button>
@@ -166,7 +166,7 @@ const PlanDetail = () => {
         <div className="flex items-center space-x-3">
           <Link
             to={`/superadmin/subscription-plans/${id}/edit`}
-            className="flex items-center space-x-2 px-4 py-2.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-700 transition-all shadow-md text-sm"
+            className="flex items-center space-x-2 px-4 py-2.5 bg-[#008ecc] text-white rounded-xl font-semibold hover:bg-[#007bb0] transition-all shadow-md text-sm"
           >
             <Edit size={16} />
             <span>Edit plan</span>
@@ -339,17 +339,17 @@ const PlanDetail = () => {
 
         {/* Sidebar limits summary panel */}
         <div className="space-y-6">
-          <div className="bg-slate-900 text-white rounded-2xl shadow-sm border border-slate-800 p-6 space-y-6">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800 pb-3 flex items-center gap-2">
-              <Users size={16} className="text-amber-500" />
+          <div className="bg-[#008ecc] text-white rounded-2xl shadow-sm border border-[#008ecc]/20 p-6 space-y-6">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-blue-100 border-b border-[#008ecc]/30 pb-3 flex items-center gap-2">
+              <Users size={16} className="text-amber-300" />
               <span>Provision Limits</span>
             </h3>
 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <Users size={16} className="text-slate-400" />
-                  <span className="text-xs font-medium text-slate-300">Users/Tenant</span>
+                  <Users size={16} className="text-blue-100" />
+                  <span className="text-xs font-medium text-blue-50">Users/Tenant</span>
                 </div>
                 <span className="text-sm font-bold text-white">
                   {max_users_per_tenant === 0 ? "Unlimited" : max_users_per_tenant}

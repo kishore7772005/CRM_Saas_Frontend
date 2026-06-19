@@ -31,14 +31,14 @@ const UpgradeRequests = () => {
   }, []);
 
   const handleApproveUpgrade = async (id) => {
-    if (!window.confirm("Are you sure you want to approve this upgrade request? This will refresh/wipe the tenant's database with new plan parameters.")) {
+    if (!window.confirm("Are you sure you want to approve this upgrade request? The tenant's plan will be upgraded and new credentials will be sent via email.")) {
       return;
     }
     setProcessingId(id);
     try {
       const res = await superApi.post(`/tenants/upgrade-approve/${id}`);
       if (res.data?.success) {
-        toast.success("Upgrade approved successfully! Database refreshed and email sent.");
+        toast.success("Upgrade approved successfully! New credentials sent via email.");
         // Refresh list
         await fetchUpgradeRequests();
       } else {
@@ -133,7 +133,7 @@ const UpgradeRequests = () => {
                         <button
                           onClick={() => handleApproveUpgrade(req._id)}
                           disabled={processingId === req._id}
-                          className="px-4 py-1.5 bg-[#008ecc] text-white rounded-lg font-bold text-xs hover:bg-blue-700 disabled:opacity-50 transition cursor-pointer shadow-sm"
+                          className="px-4 py-1.5 bg-[#008ecc] text-white rounded-lg font-bold text-xs hover:bg-[#007bb0] disabled:opacity-50 transition cursor-pointer shadow-sm"
                         >
                           {processingId === req._id ? "Approving..." : "Approve Upgrade"}
                         </button>

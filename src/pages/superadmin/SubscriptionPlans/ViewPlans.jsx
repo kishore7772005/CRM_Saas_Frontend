@@ -177,7 +177,7 @@ const ViewPlans = () => {
                     onClick={() => navigate(`/${tenantSlug}/upgrade?planId=${p._id}`)}
                     className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md text-center block ${
                       isRec
-                        ? "bg-[#008ecc] text-white hover:bg-blue-700"
+                        ? "bg-[#008ecc] text-white hover:bg-[#007bb0]"
                         : "bg-slate-50 border border-slate-200 hover:border-slate-350 text-slate-700 hover:bg-slate-100"
                     }`}
                   >
@@ -192,7 +192,7 @@ const ViewPlans = () => {
 
         {/* Reset Warning */}
         <div className="max-w-xl mx-auto bg-amber-50/60 border border-amber-200 rounded-2xl p-4 mt-16 text-center text-amber-800 text-xs leading-relaxed font-semibold">
-          Note: Subscription upgrades involve a complete database refresh. Please backup any offline data. Stale data is wiped on the fresh activation.
+          Note: Subscription upgrades involve a complete database refresh. Please backup any offline data. All existing data will be preserved.
         </div>
 
       </div>
