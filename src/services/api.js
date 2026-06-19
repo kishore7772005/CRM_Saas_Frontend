@@ -2,7 +2,7 @@ import axios from "axios";
 import store from "../store/store";
 import { clearCredentials, clearSuperAdminCredentials } from "../store/authSlice";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_SI_URI || "http://localhost:5000";
 
 // Standard tenant user API instance
 export const api = axios.create({
@@ -68,7 +68,7 @@ superApi.interceptors.response.use(
 // Configure the default global axios instance as well to transparently handle existing codebases
 axios.interceptors.request.use((config) => {
   const { token, slug } = store.getState().auth;
-  const isInternal = !config.url.startsWith("http") || config.url.includes("localhost:5000");
+  const isInternal = !config.url.startsWith("http") || config.url.includes(BASE_URL);
   
   if (isInternal) {
     if (token) {

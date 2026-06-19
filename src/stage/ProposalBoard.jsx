@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
+const BASE_URL = import.meta.env.VITE_SI_URI || "http://localhost:5000";
+
 const ProposalBoard = () => {
   const [startDate, setStartDate] = useState(null);
   const [groupedStages, setGroupedStages] = useState({});
@@ -12,7 +14,7 @@ const ProposalBoard = () => {
   const fetchProposals = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/auth/proposal/getall"
+        `${BASE_URL}/api/auth/proposal/getall`
       );
       const proposals = res.data;
 
@@ -65,7 +67,7 @@ const ProposalBoard = () => {
 
       // Optionally save updated proposal status to backend
       axios.put(
-        `http://localhost:5000/api/auth/proposal/proposal/updatestatus/${movedItem._id}`,
+        `${BASE_URL}/api/auth/proposal/proposal/updatestatus/${movedItem._id}`,
         {
           status: destCol,
         }
