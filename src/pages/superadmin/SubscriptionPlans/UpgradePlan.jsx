@@ -331,7 +331,7 @@ const UpgradePlan = () => {
                 <div>
                   <p className="font-bold">Important Data Reset Warning</p>
                   <p className="mt-1 leading-relaxed">
-                    Plan upgrades trigger a <strong>complete database refresh</strong>. Prior workspace data will be wiped clean. An email with your fresh credentials will be sent.
+                    Plan upgrades trigger a <strong>complete database refresh</strong>. All existing data will be preserved. An email with your fresh credentials will be sent.
                   </p>
                 </div>
               </div>

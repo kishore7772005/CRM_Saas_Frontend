@@ -796,7 +796,7 @@ const AdminDashboard = () => {
     const interval = setInterval(fetchDashboardData, 60_000);
 
     if (localStorage.getItem("db_refreshed_toast") === "true") {
-      toast.success("Your database has been refreshed successfully!");
+      toast.success("Your plan has been upgraded successfully! All existing data has been preserved.");
       localStorage.removeItem("db_refreshed_toast");
     }
 

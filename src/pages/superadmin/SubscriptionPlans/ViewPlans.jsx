@@ -192,7 +192,7 @@ const ViewPlans = () => {
 
         {/* Reset Warning */}
         <div className="max-w-xl mx-auto bg-amber-50/60 border border-amber-200 rounded-2xl p-4 mt-16 text-center text-amber-800 text-xs leading-relaxed font-semibold">
-          Note: Subscription upgrades involve a complete database refresh. Please backup any offline data. Stale data is wiped on the fresh activation.
+          Note: Subscription upgrades involve a complete database refresh. Please backup any offline data. All existing data will be preserved.
         </div>
 
       </div>
